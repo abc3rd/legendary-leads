@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Search, Download, Loader2 } from 'lucide-react';
 import LeadCard from '../components/leads/LeadCard';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from './utils';
+import { createPageUrl } from '@/utils';
 
 export default function Leads() {
   const [searchTerm, setSearchTerm] = useState('');

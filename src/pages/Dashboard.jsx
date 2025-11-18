@@ -7,7 +7,7 @@ import VoiceInput from '../components/voice/VoiceInput';
 import MessageBubble from '../components/chat/MessageBubble';
 import LeadCard from '../components/leads/LeadCard';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from './utils';
+import { createPageUrl } from '@/utils';
 
 export default function Dashboard() {
   const [conversation, setConversation] = useState(null);
