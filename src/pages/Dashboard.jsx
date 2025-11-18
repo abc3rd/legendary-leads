@@ -22,33 +22,40 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (conversation) {
+    if (conversation?.id) {
       const unsubscribe = base44.agents.subscribeToConversation(conversation.id, (data) => {
-        setMessages(data.messages || []);
-        setIsProcessing(data.messages?.some(m => 
-          m.tool_calls?.some(tc => ['running', 'in_progress', 'pending'].includes(tc.status))
+        const msgs = data?.messages || [];
+        setMessages(msgs);
+        setIsProcessing(msgs.some(m => 
+          m?.tool_calls?.some(tc => ['running', 'in_progress', 'pending'].includes(tc?.status))
         ) || false);
       });
 
       return () => unsubscribe();
     }
-  }, [conversation]);
+  }, [conversation?.id]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const initConversation = async () => {
-    const conv = await base44.agents.createConversation({
-      agent_name: 'glytch',
-      metadata: { name: 'Lead Search Session' }
-    });
-    setConversation(conv);
-    
-    await base44.agents.addMessage(conv, {
-      role: 'assistant',
-      content: "👋 Hey there! I'm **Glytch**, your AI butler for lead generation.\n\nI can help you find leads from your database by:\n- **Keywords** in bios, names, or categories\n- **Follower counts** (e.g., \"influencers over 50k\")\n- **Location** using area codes\n- **Categories** or niches\n- Any combination you need\n\nTry saying something like:\n- *\"Find fitness coaches with over 10k followers\"*\n- *\"Show me leads in the 212 area code with email addresses\"*\n- *\"Get me beauty influencers who have a website\"*\n\nWhat leads are you looking for?"
-    });
+    try {
+      const conv = await base44.agents.createConversation({
+        agent_name: 'glytch',
+        metadata: { name: 'Lead Search Session' }
+      });
+      
+      setConversation(conv);
+      setMessages([]);
+      
+      await base44.agents.addMessage(conv, {
+        role: 'assistant',
+        content: "👋 Hey there! I'm **Glytch**, your AI butler for lead generation.\n\nI can help you find leads from your database by:\n- **Keywords** in bios, names, or categories\n- **Follower counts** (e.g., \"influencers over 50k\")\n- **Location** using area codes\n- **Categories** or niches\n- Any combination you need\n\nTry saying something like:\n- *\"Find fitness coaches with over 10k followers\"*\n- *\"Show me leads in the 212 area code with email addresses\"*\n- *\"Get me beauty influencers who have a website\"*\n\nWhat leads are you looking for?"
+      });
+    } catch (error) {
+      console.error('Failed to init conversation:', error);
+    }
   };
 
   const sendMessage = async (text) => {
@@ -57,10 +64,15 @@ export default function Dashboard() {
     setTextInput('');
     setIsProcessing(true);
 
-    await base44.agents.addMessage(conversation, {
-      role: 'user',
-      content: text
-    });
+    try {
+      await base44.agents.addMessage(conversation, {
+        role: 'user',
+        content: text
+      });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setIsProcessing(false);
+    }
   };
 
   const handleVoiceTranscript = (transcript) => {
@@ -116,9 +128,15 @@ export default function Dashboard() {
               </div>
 
               <div className="h-[500px] overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-900/50 to-gray-950/50">
-                {messages.map((message, idx) => (
-                  <MessageBubble key={idx} message={message} />
-                ))}
+                {messages && messages.length > 0 ? (
+                  messages.map((message, idx) => (
+                    <MessageBubble key={idx} message={message} />
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-500">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
 

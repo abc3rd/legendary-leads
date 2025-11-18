@@ -153,7 +153,7 @@ export default function MessageBubble({ message }) {
                     </div>
                 )}
                 
-                {message.tool_calls?.length > 0 && (
+                {message.tool_calls && message.tool_calls.length > 0 && (
                     <div className="space-y-1 mt-1">
                         {message.tool_calls.map((toolCall, idx) => (
                             <FunctionDisplay key={idx} toolCall={toolCall} />
