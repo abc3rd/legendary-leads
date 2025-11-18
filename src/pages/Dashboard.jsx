@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Upload, Download, Sparkles, Send } from 'lucide-react';
+import { Upload, Download, Sparkles, Send, Loader2 } from 'lucide-react';
 import VoiceInput from '../components/voice/VoiceInput';
 import MessageBubble from '../components/chat/MessageBubble';
 import LeadCard from '../components/leads/LeadCard';
