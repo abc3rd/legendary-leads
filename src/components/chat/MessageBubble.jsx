@@ -26,16 +26,16 @@ const FunctionDisplay = ({ toolCall }) => {
     );
     
     const statusConfig = {
-        pending: { icon: Clock, color: 'text-slate-400', text: 'Pending' },
-        running: { icon: Loader2, color: 'text-purple-400', text: 'Searching...', spin: true },
-        in_progress: { icon: Loader2, color: 'text-purple-400', text: 'Searching...', spin: true },
+        pending: { icon: Clock, color: '#9ea7b5', text: 'Pending' },
+        running: { icon: Loader2, color: '#1f6fc5', text: 'Searching...', spin: true },
+        in_progress: { icon: Loader2, color: '#1f6fc5', text: 'Searching...', spin: true },
         completed: isError ? 
-            { icon: AlertCircle, color: 'text-red-500', text: 'Failed' } : 
-            { icon: CheckCircle2, color: 'text-green-400', text: 'Complete' },
-        success: { icon: CheckCircle2, color: 'text-green-400', text: 'Complete' },
-        failed: { icon: AlertCircle, color: 'text-red-500', text: 'Failed' },
-        error: { icon: AlertCircle, color: 'text-red-500', text: 'Failed' }
-    }[status] || { icon: Zap, color: 'text-purple-400', text: '' };
+            { icon: AlertCircle, color: '#c0392b', text: 'Failed' } : 
+            { icon: CheckCircle2, color: '#26c485', text: 'Complete' },
+        success: { icon: CheckCircle2, color: '#26c485', text: 'Complete' },
+        failed: { icon: AlertCircle, color: '#c0392b', text: 'Failed' },
+        error: { icon: AlertCircle, color: '#c0392b', text: 'Failed' }
+    }[status] || { icon: Zap, color: '#1f6fc5', text: '' };
     
     const Icon = statusConfig.icon;
     const formattedName = name.split('.').reverse().join(' ').toLowerCase();
@@ -44,22 +44,21 @@ const FunctionDisplay = ({ toolCall }) => {
         <div className="mt-2 text-xs">
             <button
                 onClick={() => setExpanded(!expanded)}
-                className={cn(
-                    "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all",
-                    "hover:bg-gray-800/50",
-                    expanded ? "bg-gray-800/50 border-purple-500/30" : "bg-gray-900/50 border-gray-700"
-                )}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
+                style={{
+                    background: expanded ? 'rgba(7, 26, 44, 0.5)' : 'rgba(2, 8, 19, 0.5)',
+                    borderColor: expanded ? 'rgba(31, 111, 197, 0.3)' : '#5e6a78'
+                }}
             >
-                <Icon className={cn("h-3 w-3", statusConfig.color, statusConfig.spin && "animate-spin")} />
-                <span className="text-gray-300">{formattedName}</span>
+                <Icon className={cn("h-3 w-3", statusConfig.spin && "animate-spin")} style={{ color: statusConfig.color }} />
+                <span style={{ color: '#d7dde5' }}>{formattedName}</span>
                 {statusConfig.text && (
-                    <span className={cn("text-gray-400", isError && "text-red-400")}>
+                    <span style={{ color: isError ? '#c0392b' : '#9ea7b5' }}>
                         • {statusConfig.text}
                     </span>
                 )}
                 {!statusConfig.spin && (toolCall.arguments_string || results) && (
-                    <ChevronRight className={cn("h-3 w-3 text-gray-500 transition-transform ml-auto", 
-                        expanded && "rotate-90")} />
+                    <ChevronRight className={cn("h-3 w-3 transition-transform ml-auto", expanded && "rotate-90")} style={{ color: '#5e6a78' }} />
                 )}
             </button>
             
@@ -100,16 +99,19 @@ export default function MessageBubble({ message }) {
     return (
         <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
             {!isUser && (
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center mt-0.5 shadow-lg shadow-purple-500/20">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center mt-0.5 shadow-lg" style={{
+                    background: 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)'
+                }}>
                     <span className="text-white font-bold text-sm">G</span>
                 </div>
             )}
             <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
                 {message.content && (
-                    <div className={cn(
-                        "rounded-2xl px-4 py-2.5",
-                        isUser ? "bg-gradient-to-br from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/20" : "bg-gray-800 border border-gray-700 text-gray-100"
-                    )}>
+                    <div className="rounded-2xl px-4 py-2.5" style={{
+                        background: isUser ? '#1f6fc5' : '#071a2c',
+                        color: '#ffffff',
+                        border: isUser ? 'none' : '1px solid #5e6a78'
+                    }}>
                         {isUser ? (
                             <p className="text-sm leading-relaxed">{message.content}</p>
                         ) : (

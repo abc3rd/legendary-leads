@@ -85,49 +85,48 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
+    <div className="min-h-screen" style={{ background: '#020813' }}>
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              Legendary Leads
+            <h1 className="font-bold" style={{ 
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: '3rem',
+              color: '#ffffff',
+              fontWeight: 700
+            }}>
+              Glytch AI Butler
             </h1>
-            <p className="text-gray-400 mt-1">Voice-commanded lead generation powered by Glytch AI</p>
-          </div>
-          <div className="flex gap-3">
-            <Link to={createPageUrl('Import')}>
-              <Button variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
-                <Upload className="h-4 w-4 mr-2" />
-                Import CSV
-              </Button>
-            </Link>
-            <Link to={createPageUrl('Leads')}>
-              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                <Sparkles className="h-4 w-4 mr-2" />
-                All Leads
-              </Button>
-            </Link>
+            <p className="mt-1" style={{ color: '#9ea7b5' }}>Voice-commanded lead generation</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Chat Panel */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800 shadow-2xl overflow-hidden">
-              <div className="border-b border-gray-800 p-4 bg-gradient-to-r from-gray-900 to-gray-800">
+            <div className="rounded-2xl shadow-2xl overflow-hidden" style={{ 
+              background: '#071a2c',
+              border: '1px solid #1f6fc5'
+            }}>
+              <div className="p-4" style={{ 
+                borderBottom: '1px solid rgba(31, 111, 197, 0.2)',
+                background: 'rgba(7, 26, 44, 0.8)'
+              }}>
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                  <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)'
+                  }}>
                     <span className="text-white font-bold">G</span>
                   </div>
                   <div>
-                    <h2 className="font-semibold text-white">Glytch AI Butler</h2>
-                    <p className="text-xs text-gray-400">Your lead generation assistant</p>
+                    <h2 className="font-semibold" style={{ color: '#ffffff' }}>Glytch AI Butler</h2>
+                    <p className="text-xs" style={{ color: '#9ea7b5' }}>Your lead generation assistant</p>
                   </div>
                 </div>
               </div>
 
-              <div className="h-[500px] overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-900/50 to-gray-950/50">
+              <div className="h-[500px] overflow-y-auto p-6 space-y-4" style={{ background: '#020813' }}>
                 {messages && messages.length > 0 ? (
                   messages.map((message, idx) => (
                     <MessageBubble key={idx} message={message} />
@@ -140,7 +139,10 @@ export default function Dashboard() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="border-t border-gray-800 p-4 bg-gray-900/80 backdrop-blur-sm">
+              <div className="p-4" style={{ 
+                borderTop: '1px solid rgba(31, 111, 197, 0.2)',
+                background: 'rgba(7, 26, 44, 0.8)'
+              }}>
                 <div className="flex flex-col items-center gap-4">
                   <VoiceInput 
                     onTranscript={handleVoiceTranscript} 
@@ -153,13 +155,24 @@ export default function Dashboard() {
                         value={textInput}
                         onChange={(e) => setTextInput(e.target.value)}
                         placeholder="Or type your request here..."
-                        className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                        style={{
+                          background: '#071a2c',
+                          borderColor: '#5e6a78',
+                          color: '#ffffff'
+                        }}
+                        className="placeholder:text-[#9ea7b5]"
                         disabled={isProcessing}
                       />
                       <Button 
                         type="submit" 
                         disabled={isProcessing || !textInput.trim()}
-                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                        className="rounded-full transition-all hover:shadow-lg"
+                        style={{
+                          background: '#1f6fc5',
+                          color: '#ffffff',
+                          fontSize: '16px',
+                          fontWeight: 500
+                        }}
                       >
                         <Send className="h-4 w-4" />
                       </Button>
@@ -172,57 +185,75 @@ export default function Dashboard() {
 
           {/* Quick Stats */}
           <div className="space-y-4">
-            <div className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+            <div className="rounded-2xl p-6" style={{ 
+              background: '#071a2c',
+              border: '1px solid rgba(31, 111, 197, 0.3)'
+            }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: '#ffffff' }}>Quick Actions</h3>
               <div className="space-y-3">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start border-gray-700 hover:bg-gray-800"
+                  className="w-full justify-start rounded-lg transition-all"
+                  style={{
+                    borderColor: '#5e6a78',
+                    color: '#d7dde5'
+                  }}
                   onClick={() => sendMessage("Show me influencers with over 10k followers")}
                   disabled={isProcessing}
                 >
-                  <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
+                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#1f6fc5' }} />
                   Find Top Influencers
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start border-gray-700 hover:bg-gray-800"
+                  className="w-full justify-start rounded-lg transition-all"
+                  style={{
+                    borderColor: '#5e6a78',
+                    color: '#d7dde5'
+                  }}
                   onClick={() => sendMessage("Find leads with email addresses")}
                   disabled={isProcessing}
                 >
-                  <Sparkles className="h-4 w-4 mr-2 text-blue-400" />
+                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#1f6fc5' }} />
                   Leads with Emails
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start border-gray-700 hover:bg-gray-800"
+                  className="w-full justify-start rounded-lg transition-all"
+                  style={{
+                    borderColor: '#5e6a78',
+                    color: '#d7dde5'
+                  }}
                   onClick={() => sendMessage("Show me business accounts with websites")}
                   disabled={isProcessing}
                 >
-                  <Sparkles className="h-4 w-4 mr-2 text-green-400" />
+                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#26c485' }} />
                   Business Accounts
                 </Button>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-900 to-gray-950 backdrop-blur-sm rounded-2xl border border-gray-800 p-6">
-              <h3 className="text-lg font-semibold text-white mb-2">Voice Commands</h3>
-              <p className="text-sm text-gray-400 mb-4">Try saying:</p>
-              <ul className="space-y-2 text-xs text-gray-500">
+            <div className="rounded-2xl p-6" style={{ 
+              background: '#071a2c',
+              border: '1px solid rgba(94, 106, 120, 0.3)'
+            }}>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: '#ffffff' }}>Voice Commands</h3>
+              <p className="text-sm mb-4" style={{ color: '#9ea7b5' }}>Try saying:</p>
+              <ul className="space-y-2 text-xs" style={{ color: '#9ea7b5' }}>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
+                  <span style={{ color: '#1f6fc5' }}>•</span>
                   <span>"Find fitness coaches in California"</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
+                  <span style={{ color: '#1f6fc5' }}>•</span>
                   <span>"Show leads with 50k+ followers"</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
+                  <span style={{ color: '#1f6fc5' }}>•</span>
                   <span>"Get me beauty influencers"</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
+                  <span style={{ color: '#1f6fc5' }}>•</span>
                   <span>"Leads in the 310 area code"</span>
                 </li>
               </ul>

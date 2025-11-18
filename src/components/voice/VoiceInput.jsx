@@ -74,12 +74,11 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
       <Button
         onClick={toggleListening}
         disabled={isProcessing || !isSupported}
-        className={cn(
-          "h-24 w-24 rounded-full transition-all duration-300 shadow-lg",
-          isListening 
-            ? "bg-red-500 hover:bg-red-600 animate-pulse shadow-red-500/50" 
-            : "bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-purple-500/30"
-        )}
+        className="h-24 w-24 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+        style={{
+          background: isListening ? '#c0392b' : 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)',
+          animation: isListening ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+        }}
         size="icon"
       >
         {isProcessing ? (
@@ -96,8 +95,9 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="w-1 bg-purple-500 rounded-full animate-pulse"
+              className="w-1 rounded-full animate-pulse"
               style={{
+                background: '#1f6fc5',
                 height: `${Math.random() * 30 + 10}px`,
                 animationDelay: `${i * 0.1}s`,
                 animationDuration: '0.6s'
@@ -108,17 +108,17 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
       )}
 
       {transcript && (
-        <p className="text-sm text-gray-400 italic animate-fade-in">
+        <p className="text-sm italic animate-fade-in" style={{ color: '#9ea7b5' }}>
           "{transcript}"
         </p>
       )}
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs" style={{ color: '#9ea7b5' }}>
         {isListening ? 'Listening... Click to stop' : isProcessing ? 'Processing...' : 'Click to speak with Glytch'}
       </p>
 
       {!isSupported && (
-        <p className="text-xs text-red-400">
+        <p className="text-xs" style={{ color: '#c0392b' }}>
           Voice input not supported. Use Chrome or Edge browser.
         </p>
       )}
