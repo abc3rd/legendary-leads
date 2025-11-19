@@ -37,32 +37,54 @@ export default function Import() {
 
   const parseCSV = (text) => {
     const lines = text.split('\n').filter(line => line.trim());
-    const headers = lines[0].split(',').map(h => h.trim().replace(/['"]/g, ''));
+    if (lines.length === 0) return [];
+    
+    // Parse headers
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"_\s]/g, ''));
     const rows = [];
     
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',');
+      const line = lines[i];
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+      
+      // Handle quoted values with commas
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      
       const row = {};
       headers.forEach((header, index) => {
-        const key = header.toLowerCase().replace(/[_\s]/g, '');
-        let value = values[index]?.trim().replace(/^["']|["']$/g, '') || '';
+        let value = values[index]?.replace(/^["']|["']$/g, '') || '';
         
-        if (key.includes('follower') || key.includes('following')) {
-          value = parseInt(value) || 0;
-        }
-        
-        if (key.includes('username')) row.username = value;
-        else if (key.includes('name') && !key.includes('user')) row.name = value;
-        else if (key.includes('bio')) row.bio = value;
-        else if (key.includes('category')) row.category = value;
-        else if (key.includes('website')) row.website = value;
-        else if (key.includes('follower') && key.includes('count')) row.followerCount = value;
-        else if (key.includes('following') && key.includes('count')) row.followingCount = value;
-        else if (key.includes('email')) row.email = value;
-        else if (key.includes('phone')) row.phone = value;
+        // Map to entity fields
+        if (header.includes('username')) row.username = value;
+        else if (header.includes('name') && !header.includes('user')) row.name = value;
+        else if (header.includes('bio')) row.bio = value;
+        else if (header.includes('category') || header.includes('niche')) row.category = value;
+        else if (header.includes('website') || header.includes('url')) row.website = value;
+        else if (header.includes('follower')) row.followerCount = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+        else if (header.includes('following')) row.followingCount = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+        else if (header.includes('email')) row.email = value;
+        else if (header.includes('phone')) row.phone = value;
+        else if (header.includes('tag')) row.tag = value;
+        else if (header.includes('status')) row.status = value;
       });
       
-      if (row.username || row.email) rows.push(row);
+      // Only add rows with at least username or email
+      if ((row.username || row.email) && Object.keys(row).length > 0) {
+        rows.push(row);
+      }
     }
     return rows;
   };
@@ -100,17 +122,22 @@ export default function Import() {
           message: `Importing ${leads.length} leads from ${file.name}...` 
         });
 
-        // Import in chunks of 1000
-        const chunkSize = 1000;
+        // Import in chunks of 500
+        const chunkSize = 500;
         for (let i = 0; i < leads.length; i += chunkSize) {
           const chunk = leads.slice(i, i + chunkSize);
-          await base44.entities.Lead.bulkCreate(chunk);
-          totalImported += chunk.length;
-          
-          setProgress({ 
-            status: 'importing', 
-            message: `Imported ${totalImported} leads so far...` 
-          });
+          try {
+            await base44.entities.Lead.bulkCreate(chunk);
+            totalImported += chunk.length;
+            
+            setProgress({ 
+              status: 'importing', 
+              message: `Imported ${totalImported} of ${leads.length} leads from ${file.name}...` 
+            });
+          } catch (chunkError) {
+            console.error('Chunk import error:', chunkError);
+            toast.error(`Error importing batch at row ${i}`);
+          }
         }
       }
 
