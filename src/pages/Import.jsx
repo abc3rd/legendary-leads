@@ -7,72 +7,101 @@ import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 
 export default function Import() {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(null);
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === 'text/csv') {
-      setFile(selectedFile);
+    const selectedFiles = Array.from(e.target.files).filter(f => f.type === 'text/csv');
+    if (selectedFiles.length > 0) {
+      setFiles(selectedFiles);
       setProgress(null);
     } else {
-      toast.error('Please select a valid CSV file');
+      toast.error('Please select valid CSV files');
     }
   };
 
+  const parseCSV = (text) => {
+    const lines = text.split('\n').filter(line => line.trim());
+    const headers = lines[0].split(',').map(h => h.trim().replace(/['"]/g, ''));
+    const rows = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',');
+      const row = {};
+      headers.forEach((header, index) => {
+        const key = header.toLowerCase().replace(/[_\s]/g, '');
+        let value = values[index]?.trim().replace(/^["']|["']$/g, '') || '';
+        
+        if (key.includes('follower') || key.includes('following')) {
+          value = parseInt(value) || 0;
+        }
+        
+        if (key.includes('username')) row.username = value;
+        else if (key.includes('name') && !key.includes('user')) row.name = value;
+        else if (key.includes('bio')) row.bio = value;
+        else if (key.includes('category')) row.category = value;
+        else if (key.includes('website')) row.website = value;
+        else if (key.includes('follower') && key.includes('count')) row.followerCount = value;
+        else if (key.includes('following') && key.includes('count')) row.followingCount = value;
+        else if (key.includes('email')) row.email = value;
+        else if (key.includes('phone')) row.phone = value;
+      });
+      
+      if (row.username || row.email) rows.push(row);
+    }
+    return rows;
+  };
+
   const handleImport = async () => {
-    if (!file) return;
+    if (files.length === 0) return;
 
     setIsUploading(true);
-    setProgress({ status: 'uploading', message: 'Uploading file...' });
+    let totalImported = 0;
 
     try {
-      // Upload file
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
-      setProgress({ status: 'processing', message: 'Extracting lead data...' });
+      for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
+        const file = files[fileIndex];
+        setProgress({ 
+          status: 'processing', 
+          message: `Processing file ${fileIndex + 1}/${files.length}: ${file.name}...` 
+        });
 
-      // Extract data using AI
-      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
-        file_url,
-        json_schema: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              username: { type: 'string' },
-              name: { type: 'string' },
-              bio: { type: 'string' },
-              category: { type: 'string' },
-              website: { type: 'string' },
-              followerCount: { type: 'number' },
-              followingCount: { type: 'number' },
-              email: { type: 'string' },
-              phone: { type: 'string' }
-            }
-          }
+        // Read CSV directly
+        const text = await file.text();
+        const leads = parseCSV(text);
+        
+        if (leads.length === 0) {
+          toast.error(`No valid data found in ${file.name}`);
+          continue;
         }
-      });
 
-      if (result.status === 'error') {
-        throw new Error(result.details || 'Failed to extract data');
+        setProgress({ 
+          status: 'importing', 
+          message: `Importing ${leads.length} leads from ${file.name}...` 
+        });
+
+        // Import in chunks of 1000
+        const chunkSize = 1000;
+        for (let i = 0; i < leads.length; i += chunkSize) {
+          const chunk = leads.slice(i, i + chunkSize);
+          await base44.entities.Lead.bulkCreate(chunk);
+          totalImported += chunk.length;
+          
+          setProgress({ 
+            status: 'importing', 
+            message: `Imported ${totalImported} leads so far...` 
+          });
+        }
       }
-
-      const leads = Array.isArray(result.output) ? result.output : [result.output];
-      
-      setProgress({ status: 'importing', message: `Importing ${leads.length} leads...` });
-
-      // Bulk create leads
-      await base44.entities.Lead.bulkCreate(leads);
 
       setProgress({ 
         status: 'success', 
-        message: `Successfully imported ${leads.length} leads!` 
+        message: `Successfully imported ${totalImported} leads from ${files.length} file(s)!` 
       });
       
-      toast.success(`Imported ${leads.length} leads!`);
-      setFile(null);
+      toast.success(`Imported ${totalImported} leads!`);
+      setFiles([]);
 
     } catch (error) {
       console.error('Import error:', error);
@@ -126,6 +155,7 @@ export default function Import() {
                 className="hidden"
                 id="csv-upload"
                 disabled={isUploading}
+                multiple
               />
               <label 
                 htmlFor="csv-upload" 
@@ -134,17 +164,19 @@ export default function Import() {
                 <div className="h-16 w-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
                   <Upload className="h-8 w-8 text-white" />
                 </div>
-                {file ? (
+                {files.length > 0 ? (
                   <>
-                    <p className="text-white font-semibold">{file.name}</p>
-                    <p className="text-sm text-gray-400">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
+                    <p className="text-white font-semibold">{files.length} file(s) selected</p>
+                    <div className="text-sm text-gray-400 space-y-1">
+                      {files.map((f, i) => (
+                        <div key={i}>{f.name} ({(f.size / 1024 / 1024).toFixed(2)} MB)</div>
+                      ))}
+                    </div>
                   </>
                 ) : (
                   <>
-                    <p className="text-white font-semibold">Click to upload CSV</p>
-                    <p className="text-sm text-gray-400">or drag and drop</p>
+                    <p className="text-white font-semibold">Click to upload CSV files</p>
+                    <p className="text-sm text-gray-400">Select one or multiple files</p>
                   </>
                 )}
               </label>
@@ -175,7 +207,7 @@ export default function Import() {
             {/* Import Button */}
             <Button
               onClick={handleImport}
-              disabled={!file || isUploading}
+              disabled={files.length === 0 || isUploading}
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-6 text-lg"
             >
               {isUploading ? (
