@@ -10,6 +10,20 @@ export default function Import() {
   const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(null);
+  const [user, setUser] = useState(null);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Auth error:', error);
+        toast.error('Please log in to import leads');
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files).filter(f => f.type === 'text/csv');
@@ -55,6 +69,11 @@ export default function Import() {
 
   const handleImport = async () => {
     if (files.length === 0) return;
+
+    if (!user) {
+      toast.error('You must be logged in to import leads');
+      return;
+    }
 
     setIsUploading(true);
     let totalImported = 0;
