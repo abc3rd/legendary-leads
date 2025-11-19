@@ -114,11 +114,11 @@ export default function Dashboard() {
                 background: 'rgba(7, 26, 44, 0.8)'
               }}>
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{
-                    background: 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)'
-                  }}>
-                    <span className="text-white font-bold">G</span>
-                  </div>
+                  <img 
+                    src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
+                    alt="Glytch"
+                    className="h-10 w-10 rounded-lg object-cover"
+                  />
                   <div>
                     <h2 className="font-semibold" style={{ color: '#ffffff' }}>Glytch AI Butler</h2>
                     <p className="text-xs" style={{ color: '#9ea7b5' }}>Your lead generation assistant</p>

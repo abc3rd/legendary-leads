@@ -49,9 +49,11 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to={createPageUrl('Dashboard')} className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)' }}>
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
+              <img 
+                src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
+                alt="Legendary Leads"
+                className="h-10 w-10 rounded-lg object-cover"
+              />
               <span className="text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#ffffff' }}>
                 Legendary Leads
               </span>

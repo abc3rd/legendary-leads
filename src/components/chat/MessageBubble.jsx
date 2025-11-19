@@ -99,11 +99,11 @@ export default function MessageBubble({ message }) {
     return (
         <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
             {!isUser && (
-                <div className="h-8 w-8 rounded-lg flex items-center justify-center mt-0.5 shadow-lg" style={{
-                    background: 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)'
-                }}>
-                    <span className="text-white font-bold text-sm">G</span>
-                </div>
+                <img 
+                  src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
+                  alt="Glytch"
+                  className="h-8 w-8 rounded-lg object-cover mt-0.5 shadow-lg"
+                />
             )}
             <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
                 {message.content && (
