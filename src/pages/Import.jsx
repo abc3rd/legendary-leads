@@ -39,50 +39,65 @@ export default function Import() {
     const lines = text.split('\n').filter(line => line.trim());
     if (lines.length === 0) return [];
     
-    // Parse headers
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"_\s]/g, ''));
-    const rows = [];
-    
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
+    // Parse header row properly handling quotes
+    const parseRow = (line) => {
       const values = [];
       let current = '';
       let inQuotes = false;
       
-      // Handle quoted values with commas
-      for (let j = 0; j < line.length; j++) {
-        const char = line[j];
-        if (char === '"') {
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+        
+        if (char === '"' && inQuotes && nextChar === '"') {
+          // Escaped quote
+          current += '"';
+          i++; // Skip next quote
+        } else if (char === '"') {
           inQuotes = !inQuotes;
         } else if (char === ',' && !inQuotes) {
-          values.push(current.trim());
+          values.push(current);
           current = '';
         } else {
           current += char;
         }
       }
-      values.push(current.trim());
-      
+      values.push(current);
+      return values.map(v => v.trim().replace(/^["']|["']$/g, ''));
+    };
+    
+    const headers = parseRow(lines[0]).map(h => h.toLowerCase().replace(/[_\s]/g, ''));
+    const rows = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const values = parseRow(lines[i]);
       const row = {};
+      
       headers.forEach((header, index) => {
-        let value = values[index]?.replace(/^["']|["']$/g, '') || '';
+        const value = values[index] || '';
         
-        // Map to entity fields
-        if (header.includes('username')) row.username = value;
-        else if (header.includes('name') && !header.includes('user')) row.name = value;
-        else if (header.includes('bio')) row.bio = value;
-        else if (header.includes('category') || header.includes('niche')) row.category = value;
-        else if (header.includes('website') || header.includes('url')) row.website = value;
-        else if (header.includes('follower')) row.followerCount = parseInt(value.replace(/[^0-9]/g, '')) || 0;
-        else if (header.includes('following')) row.followingCount = parseInt(value.replace(/[^0-9]/g, '')) || 0;
-        else if (header.includes('email')) row.email = value;
-        else if (header.includes('phone')) row.phone = value;
-        else if (header.includes('tag')) row.tag = value;
-        else if (header.includes('status')) row.status = value;
+        // Map to entity fields with flexible matching
+        if (header.includes('username') || header === 'user') row.username = value;
+        else if ((header.includes('name') || header === 'fullname') && !header.includes('user')) row.name = value;
+        else if (header.includes('bio') || header.includes('description')) row.bio = value;
+        else if (header.includes('category') || header.includes('niche') || header.includes('type')) row.category = value;
+        else if (header.includes('website') || header.includes('url') || header === 'link') row.website = value;
+        else if (header.includes('follower') || header === 'followers') {
+          const num = parseInt(value.replace(/[^0-9]/g, ''));
+          if (!isNaN(num)) row.followerCount = num;
+        }
+        else if (header.includes('following') || header === 'follows') {
+          const num = parseInt(value.replace(/[^0-9]/g, ''));
+          if (!isNaN(num)) row.followingCount = num;
+        }
+        else if (header.includes('email') || header.includes('mail')) row.email = value;
+        else if (header.includes('phone') || header.includes('tel') || header.includes('mobile')) row.phone = value;
+        else if (header.includes('tag') || header.includes('label')) row.tag = value;
+        else if (header.includes('status') || header.includes('stage')) row.status = value;
       });
       
-      // Only add rows with at least username or email
-      if ((row.username || row.email) && Object.keys(row).length > 0) {
+      // Add row if it has any meaningful data
+      if (row.username || row.email || row.name) {
         rows.push(row);
       }
     }
@@ -122,8 +137,8 @@ export default function Import() {
           message: `Importing ${leads.length} leads from ${file.name}...` 
         });
 
-        // Import in chunks of 500
-        const chunkSize = 500;
+        // Import in smaller chunks with better error handling
+        const chunkSize = 100;
         for (let i = 0; i < leads.length; i += chunkSize) {
           const chunk = leads.slice(i, i + chunkSize);
           try {
@@ -132,11 +147,13 @@ export default function Import() {
             
             setProgress({ 
               status: 'importing', 
-              message: `Imported ${totalImported} of ${leads.length} leads from ${file.name}...` 
+              message: `Imported ${totalImported} / ${leads.length} leads...` 
             });
           } catch (chunkError) {
             console.error('Chunk import error:', chunkError);
-            toast.error(`Error importing batch at row ${i}`);
+            console.error('Failed chunk:', chunk);
+            toast.error(`Error at rows ${i}-${i + chunk.length}. Continuing...`);
+            // Continue with next chunk instead of failing completely
           }
         }
       }
