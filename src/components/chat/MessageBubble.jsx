@@ -216,9 +216,12 @@ export default function MessageBubble({ message }) {
                 )}
                 
                 {message.tool_calls && message.tool_calls.length > 0 && (
-                    <div className="space-y-1 mt-1">
+                    <div className="space-y-2 mt-2">
                         {message.tool_calls.map((toolCall, idx) => (
-                            <FunctionDisplay key={idx} toolCall={toolCall} />
+                            <div key={idx}>
+                                <FunctionDisplay toolCall={toolCall} />
+                                {toolCall.status === 'completed' && <ResultsSection toolCall={toolCall} />}
+                            </div>
                         ))}
                     </div>
                 )}
