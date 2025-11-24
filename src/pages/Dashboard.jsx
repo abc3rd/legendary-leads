@@ -147,6 +147,7 @@ export default function Dashboard() {
                   <VoiceInput 
                     onTranscript={handleVoiceTranscript} 
                     isProcessing={isProcessing}
+                    autoRestart={true}
                   />
                   
                   <div className="w-full flex gap-2">

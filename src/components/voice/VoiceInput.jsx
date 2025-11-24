@@ -3,11 +3,17 @@ import { Mic, MicOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-export default function VoiceInput({ onTranscript, isProcessing }) {
+export default function VoiceInput({ onTranscript, isProcessing, autoRestart = false }) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [isActive, setIsActive] = useState(false);
   const recognitionRef = useRef(null);
   const [isSupported, setIsSupported] = useState(true);
+  const autoRestartRef = useRef(autoRestart);
+
+  useEffect(() => {
+    autoRestartRef.current = autoRestart;
+  }, [autoRestart]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -41,6 +47,9 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
       recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        if (event.error === 'not-allowed') {
+          setIsActive(false);
+        }
       };
 
       recognitionRef.current = recognition;
@@ -53,17 +62,35 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
     };
   }, [onTranscript]);
 
+  useEffect(() => {
+    if (!isProcessing && isActive && !isListening && autoRestartRef.current) {
+      const timer = setTimeout(() => {
+        if (recognitionRef.current && isActive) {
+          try {
+            recognitionRef.current.start();
+            setIsListening(true);
+          } catch (e) {
+            console.error('Failed to restart recognition:', e);
+          }
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isProcessing, isActive, isListening]);
+
   const toggleListening = () => {
     if (!isSupported) {
       alert('Voice recognition is not supported in your browser. Please use Chrome or Edge.');
       return;
     }
 
-    if (isListening) {
+    if (isActive) {
       recognitionRef.current?.stop();
       setIsListening(false);
+      setIsActive(false);
     } else {
       setTranscript('');
+      setIsActive(true);
       recognitionRef.current?.start();
       setIsListening(true);
     }
@@ -76,7 +103,7 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
         disabled={isProcessing || !isSupported}
         className="h-24 w-24 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
         style={{
-          background: isListening ? '#c0392b' : 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)',
+          background: isActive ? (isListening ? '#c0392b' : '#1f6fc5') : 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)',
           animation: isListening ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
         }}
         size="icon"
@@ -114,8 +141,13 @@ export default function VoiceInput({ onTranscript, isProcessing }) {
       )}
 
       <p className="text-xs" style={{ color: '#9ea7b5' }}>
-        {isListening ? 'Listening... Click to stop' : isProcessing ? 'Processing...' : 'Click to speak with Glytch'}
+        {isListening ? 'Listening...' : isProcessing ? 'Glytch is thinking...' : isActive ? 'Hands-free mode active' : 'Tap to start conversation'}
       </p>
+      {isActive && (
+        <p className="text-xs font-medium" style={{ color: '#26c485' }}>
+          🎤 Hands-free mode ON - Tap button to end
+        </p>
+      )}
 
       {!isSupported && (
         <p className="text-xs" style={{ color: '#c0392b' }}>

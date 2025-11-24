@@ -93,8 +93,68 @@ const FunctionDisplay = ({ toolCall }) => {
     );
 };
 
+const ResultsSection = ({ toolCall }) => {
+    const results = toolCall?.results;
+    let parsedResults = null;
+    let resultType = 'unknown';
+    
+    try {
+        parsedResults = typeof results === 'string' ? JSON.parse(results) : results;
+        
+        if (Array.isArray(parsedResults) && parsedResults.length > 0 && parsedResults[0].username) {
+            resultType = 'database';
+        } else if (typeof parsedResults === 'object' && (parsedResults.query || parsedResults.results)) {
+            resultType = 'web';
+        }
+    } catch {
+        parsedResults = results;
+    }
+    
+    if (!parsedResults || (Array.isArray(parsedResults) && parsedResults.length === 0)) {
+        return null;
+    }
+    
+    return (
+        <div className="mt-3 rounded-xl overflow-hidden" style={{ background: '#020813', border: '1px solid #5e6a78' }}>
+            <div className="px-3 py-2 flex items-center gap-2" style={{ background: '#071a2c', borderBottom: '1px solid #5e6a78' }}>
+                <div className="h-2 w-2 rounded-full" style={{ background: resultType === 'database' ? '#26c485' : '#1f6fc5' }} />
+                <span className="text-xs font-semibold" style={{ color: '#d7dde5' }}>
+                    {resultType === 'database' ? '📊 Database Results' : '🌐 Web Search Results'}
+                </span>
+            </div>
+            <div className="p-3 text-xs" style={{ color: '#9ea7b5' }}>
+                {resultType === 'database' && Array.isArray(parsedResults) && (
+                    <div className="space-y-2">
+                        {parsedResults.slice(0, 5).map((lead, idx) => (
+                            <div key={idx} className="p-2 rounded-lg" style={{ background: '#071a2c' }}>
+                                <div className="font-semibold" style={{ color: '#ffffff' }}>@{lead.username}</div>
+                                {lead.name && <div style={{ color: '#d7dde5' }}>{lead.name}</div>}
+                                {lead.bio && <div className="text-xs mt-1" style={{ color: '#9ea7b5' }}>{lead.bio.substring(0, 100)}...</div>}
+                            </div>
+                        ))}
+                        {parsedResults.length > 5 && (
+                            <div className="text-center pt-2" style={{ color: '#5e6a78' }}>
+                                +{parsedResults.length - 5} more results
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
 export default function MessageBubble({ message }) {
     const isUser = message.role === 'user';
+    
+    const hasResults = message.tool_calls?.some(tc => {
+        try {
+            const results = typeof tc.results === 'string' ? JSON.parse(tc.results) : tc.results;
+            return results && (Array.isArray(results) ? results.length > 0 : true);
+        } catch {
+            return false;
+        }
+    });
     
     return (
         <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
@@ -102,10 +162,10 @@ export default function MessageBubble({ message }) {
                 <img 
                   src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
                   alt="Glytch"
-                  className="h-8 w-8 rounded-lg object-cover mt-0.5 shadow-lg"
+                  className="h-8 w-8 rounded-lg object-cover mt-0.5 shadow-lg flex-shrink-0"
                 />
             )}
-            <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
+            <div className={cn("max-w-[85%] w-full", isUser && "flex flex-col items-end")}>
                 {message.content && (
                     <div className="rounded-2xl px-4 py-2.5" style={{
                         background: isUser ? '#1f6fc5' : '#071a2c',
