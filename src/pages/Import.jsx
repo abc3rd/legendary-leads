@@ -39,6 +39,9 @@ export default function Import() {
     const lines = text.split('\n').filter(line => line.trim());
     if (lines.length === 0) return [];
     
+    console.log('Total lines:', lines.length);
+    console.log('First 3 lines:', lines.slice(0, 3));
+    
     // Parse header row properly handling quotes
     const parseRow = (line) => {
       const values = [];
@@ -50,9 +53,8 @@ export default function Import() {
         const nextChar = line[i + 1];
         
         if (char === '"' && inQuotes && nextChar === '"') {
-          // Escaped quote
           current += '"';
-          i++; // Skip next quote
+          i++;
         } else if (char === '"') {
           inQuotes = !inQuotes;
         } else if (char === ',' && !inQuotes) {
@@ -66,7 +68,9 @@ export default function Import() {
       return values.map(v => v.trim().replace(/^["']|["']$/g, ''));
     };
     
-    const headers = parseRow(lines[0]).map(h => h.toLowerCase().replace(/[_\s]/g, ''));
+    const headers = parseRow(lines[0]).map(h => h.toLowerCase().replace(/[_\s-]/g, ''));
+    console.log('Parsed headers:', headers);
+    
     const rows = [];
     
     for (let i = 1; i < lines.length; i++) {
@@ -74,33 +78,37 @@ export default function Import() {
       const row = {};
       
       headers.forEach((header, index) => {
-        const value = values[index] || '';
+        const value = (values[index] || '').trim();
+        if (!value) return;
         
-        // Map to entity fields with flexible matching
-        if (header.includes('username') || header === 'user') row.username = value;
-        else if ((header.includes('name') || header === 'fullname') && !header.includes('user')) row.name = value;
-        else if (header.includes('bio') || header.includes('description')) row.bio = value;
-        else if (header.includes('category') || header.includes('niche') || header.includes('type')) row.category = value;
-        else if (header.includes('website') || header.includes('url') || header === 'link') row.website = value;
-        else if (header.includes('follower') || header === 'followers') {
+        // More flexible field mapping
+        if (header.match(/user(name)?$/i)) row.username = value;
+        else if (header.match(/^(full)?name$/i) || header === 'name') row.name = value;
+        else if (header.match(/bio|description|about/i)) row.bio = value;
+        else if (header.match(/categor|niche|type|industry/i)) row.category = value;
+        else if (header.match(/website|url|link/i)) row.website = value;
+        else if (header.match(/follower/i)) {
           const num = parseInt(value.replace(/[^0-9]/g, ''));
-          if (!isNaN(num)) row.followerCount = num;
+          if (!isNaN(num) && num >= 0) row.followerCount = num;
         }
-        else if (header.includes('following') || header === 'follows') {
+        else if (header.match(/following/i)) {
           const num = parseInt(value.replace(/[^0-9]/g, ''));
-          if (!isNaN(num)) row.followingCount = num;
+          if (!isNaN(num) && num >= 0) row.followingCount = num;
         }
-        else if (header.includes('email') || header.includes('mail')) row.email = value;
-        else if (header.includes('phone') || header.includes('tel') || header.includes('mobile')) row.phone = value;
-        else if (header.includes('tag') || header.includes('label')) row.tag = value;
-        else if (header.includes('status') || header.includes('stage')) row.status = value;
+        else if (header.match(/e?mail/i)) row.email = value;
+        else if (header.match(/phone|tel|mobile|contact/i)) row.phone = value;
+        else if (header.match(/tag|label/i)) row.tag = value;
+        else if (header.match(/status|stage/i)) row.status = value;
       });
       
-      // Add row if it has any meaningful data
-      if (row.username || row.email || row.name) {
+      // Only add rows with at least username OR email
+      if (row.username || row.email) {
         rows.push(row);
       }
     }
+    
+    console.log('Parsed rows sample (first 3):', rows.slice(0, 3));
+    console.log('Total valid rows:', rows.length);
     return rows;
   };
 
@@ -137,12 +145,14 @@ export default function Import() {
           message: `Importing ${leads.length} leads from ${file.name}...` 
         });
 
-        // Import in smaller chunks with better error handling
-        const chunkSize = 100;
+        // Import in smaller chunks with detailed error logging
+        const chunkSize = 50;
         for (let i = 0; i < leads.length; i += chunkSize) {
           const chunk = leads.slice(i, i + chunkSize);
           try {
-            await base44.entities.Lead.bulkCreate(chunk);
+            console.log(`Importing chunk ${i}-${i + chunk.length}:`, chunk[0]);
+            const result = await base44.entities.Lead.bulkCreate(chunk);
+            console.log('Chunk result:', result);
             totalImported += chunk.length;
             
             setProgress({ 
@@ -150,10 +160,10 @@ export default function Import() {
               message: `Imported ${totalImported} / ${leads.length} leads...` 
             });
           } catch (chunkError) {
-            console.error('Chunk import error:', chunkError);
-            console.error('Failed chunk:', chunk);
-            toast.error(`Error at rows ${i}-${i + chunk.length}. Continuing...`);
-            // Continue with next chunk instead of failing completely
+            console.error('CHUNK ERROR:', chunkError);
+            console.error('Error details:', chunkError.message, chunkError.response?.data);
+            console.error('Failed chunk first item:', chunk[0]);
+            toast.error(`Error: ${chunkError.message || 'Unknown error'}. Check console.`);
           }
         }
       }
