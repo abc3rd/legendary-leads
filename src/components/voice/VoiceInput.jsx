@@ -101,19 +101,20 @@ export default function VoiceInput({ onTranscript, isProcessing, autoRestart = f
       <Button
         onClick={toggleListening}
         disabled={isProcessing || !isSupported}
-        className="h-24 w-24 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+        className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-full transition-all duration-300 shadow-lg hover:shadow-2xl"
         style={{
-          background: isActive ? (isListening ? '#c0392b' : '#1f6fc5') : 'linear-gradient(135deg, #1f6fc5 0%, #26c485 100%)',
-          animation: isListening ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+          background: isActive ? (isListening ? '#f66c25' : '#54b0e7') : 'linear-gradient(135deg, #f8d417 0%, #4acbbf 50%, #54b0e7 100%)',
+          animation: isListening ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
+          border: '3px solid ' + (isListening ? '#f66c25' : '#f8d417')
         }}
         size="icon"
       >
         {isProcessing ? (
-          <Loader2 className="h-10 w-10 animate-spin text-white" />
+          <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 animate-spin" style={{ color: '#0a1929' }} />
         ) : isListening ? (
-          <MicOff className="h-10 w-10 text-white" />
+          <MicOff className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10" style={{ color: '#ffffff' }} />
         ) : (
-          <Mic className="h-10 w-10 text-white" />
+          <Mic className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10" style={{ color: '#0a1929' }} />
         )}
       </Button>
 
@@ -124,7 +125,7 @@ export default function VoiceInput({ onTranscript, isProcessing, autoRestart = f
               key={i}
               className="w-1 rounded-full animate-pulse"
               style={{
-                background: '#1f6fc5',
+                background: `linear-gradient(${['#f8d417', '#4acbbf', '#54b0e7', '#f66c25', '#4acbbf'][i]}, ${['#4acbbf', '#54b0e7', '#f66c25', '#f8d417', '#54b0e7'][i]})`,
                 height: `${Math.random() * 30 + 10}px`,
                 animationDelay: `${i * 0.1}s`,
                 animationDuration: '0.6s'
@@ -140,12 +141,12 @@ export default function VoiceInput({ onTranscript, isProcessing, autoRestart = f
         </p>
       )}
 
-      <p className="text-xs" style={{ color: '#9ea7b5' }}>
-        {isListening ? 'Listening...' : isProcessing ? 'Glytch is thinking...' : isActive ? 'Hands-free mode active' : 'Tap to start conversation'}
+      <p className="text-xs text-center" style={{ color: '#9ea7b5' }}>
+        {isListening ? 'Listening...' : isProcessing ? 'GLYTCH is thinking...' : isActive ? 'Hands-free mode active' : 'Tap to start'}
       </p>
       {isActive && (
-        <p className="text-xs font-medium" style={{ color: '#26c485' }}>
-          🎤 Hands-free mode ON - Tap button to end
+        <p className="text-xs font-medium text-center" style={{ color: '#4acbbf' }}>
+          🎤 Hands-free ON - Tap to end
         </p>
       )}
 

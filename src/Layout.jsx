@@ -17,7 +17,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#020813' }}>
+    <div className="min-h-screen" style={{ background: '#0a1929' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600&display=swap');
         
@@ -32,34 +32,35 @@ export default function Layout({ children, currentPageName }) {
         }
         
         :root {
-          --primary-navy: #071a2c;
+          --omega-yellow: #f8d417;
+          --omega-teal: #4acbbf;
+          --omega-blue: #54b0e7;
+          --omega-orange: #f66c25;
+          --primary-navy: #0a1929;
           --steel-light: #d7dde5;
           --steel-dark: #5e6a78;
-          --accent-blue: #1f6fc5;
-          --accent-green: #26c485;
-          --error-red: #c0392b;
-          --background: #020813;
+          --background: #0a1929;
           --text-primary: #ffffff;
           --text-muted: #9ea7b5;
         }
       `}</style>
 
       {/* Header */}
-      <header className="border-b" style={{ borderColor: '#071a2c' }}>
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <header className="border-b" style={{ borderColor: 'rgba(74, 203, 191, 0.2)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <Link to={createPageUrl('Dashboard')} className="flex items-center gap-3">
+            <Link to={createPageUrl('Dashboard')} className="flex items-center gap-2 sm:gap-3">
               <img 
-                src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/691ccbe8057765b3fc1fdb65/dd282f7ea_LL-Logo1024x1024.png" 
                 alt="Legendary Leads"
-                className="h-10 w-10 rounded-lg object-cover"
+                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover"
               />
-              <span className="text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#ffffff' }}>
+              <span className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#f8d417' }}>
                 Legendary Leads
               </span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-2">
+            <nav className="flex items-center gap-1 sm:gap-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -67,15 +68,15 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     key={item.path}
                     to={createPageUrl(item.path)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium"
+                    className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-all font-medium text-sm sm:text-base"
                     style={{
-                      background: active ? '#1f6fc5' : 'transparent',
-                      color: active ? '#ffffff' : '#9ea7b5',
-                      fontWeight: 500
+                      background: active ? '#54b0e7' : 'transparent',
+                      color: active ? '#0a1929' : '#9ea7b5',
+                      fontWeight: active ? 600 : 500
                     }}
                   >
-                    <Icon className="h-4 w-4" />
-                    {item.name}
+                    <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">{item.name}</span>
                   </Link>
                 );
               })}

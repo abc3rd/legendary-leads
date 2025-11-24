@@ -6,6 +6,7 @@ import { Upload, Download, Sparkles, Send, Loader2, Menu, X } from 'lucide-react
 import VoiceInput from '../components/voice/VoiceInput';
 import MessageBubble from '../components/chat/MessageBubble';
 import ChatHistory from '../components/chat/ChatHistory';
+import AnimatedHorse from '../components/ui/AnimatedHorse';
 import LeadCard from '../components/leads/LeadCard';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -106,40 +107,46 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#020813' }}>
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
+    <div className="min-h-screen" style={{ background: '#0a1929' }}>
+      <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 md:mb-8">
-          <div className="flex-1 min-w-0">
-            <h1 className="font-bold truncate" style={{ 
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'clamp(1.5rem, 5vw, 3rem)',
-              color: '#ffffff',
-              fontWeight: 700
-            }}>
-              Glytch AI Butler
-            </h1>
-            <p className="mt-1 text-sm md:text-base" style={{ color: '#9ea7b5' }}>Voice-commanded lead generation</p>
+        <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-8">
+          <div className="flex-1 min-w-0 flex items-center gap-2 sm:gap-4">
+            <AnimatedHorse isThinking={isProcessing} className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="font-bold truncate" style={{ 
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: 'clamp(1.25rem, 4vw, 2.5rem)',
+                background: 'linear-gradient(135deg, #f8d417 0%, #4acbbf 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontWeight: 800
+              }}>
+                GLYTCH
+              </h1>
+              <p className="mt-0.5 text-xs sm:text-sm" style={{ color: '#9ea7b5' }}>AI Lead Butler</p>
+            </div>
           </div>
           <Button
             onClick={() => setShowHistory(!showHistory)}
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="lg:hidden flex-shrink-0"
+            style={{ color: '#4acbbf' }}
           >
-            {showHistory ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {showHistory ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
           </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6 relative">
           {/* Mobile History Sidebar */}
           {showHistory && (
-            <div className="fixed inset-0 z-50 lg:hidden" style={{ background: 'rgba(2, 8, 19, 0.95)' }}>
-              <div className="h-full flex flex-col" style={{ background: '#071a2c' }}>
-                <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: '#5e6a78' }}>
-                  <h2 className="font-semibold" style={{ color: '#ffffff' }}>Chat History</h2>
+            <div className="fixed inset-0 z-50 lg:hidden" style={{ background: 'rgba(10, 25, 41, 0.98)' }}>
+              <div className="h-full flex flex-col" style={{ background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)' }}>
+                <div className="p-3 sm:p-4 flex items-center justify-between border-b" style={{ borderColor: '#4acbbf' }}>
+                  <h2 className="font-semibold text-sm sm:text-base" style={{ color: '#f8d417' }}>Chat History</h2>
                   <Button onClick={() => setShowHistory(false)} variant="ghost" size="icon">
-                    <X className="h-6 w-6" />
+                    <X className="h-5 w-5 sm:h-6 sm:w-6" style={{ color: '#4acbbf' }} />
                   </Button>
                 </div>
                 <ChatHistory 
@@ -154,8 +161,8 @@ export default function Dashboard() {
           {/* Desktop History Sidebar */}
           <div className="hidden lg:block lg:col-span-1">
             <div className="rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-12rem)] sticky top-6" style={{ 
-              background: '#071a2c',
-              border: '1px solid #5e6a78'
+              background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+              border: '2px solid #4acbbf'
             }}>
               <ChatHistory 
                 currentConversationId={conversation?.id}
@@ -168,28 +175,27 @@ export default function Dashboard() {
           <div className="lg:col-span-3 space-y-4 md:space-y-6">
           {/* Chat Panel */}
           <div>
-            <div className="rounded-2xl shadow-2xl overflow-hidden" style={{ 
-              background: '#071a2c',
-              border: '1px solid #1f6fc5'
+            <div className="rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden" style={{ 
+              background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+              border: '2px solid #54b0e7'
             }}>
-              <div className="p-3 md:p-4" style={{ 
-                borderBottom: '1px solid rgba(31, 111, 197, 0.2)',
-                background: 'rgba(7, 26, 44, 0.8)'
+              <div className="p-2.5 sm:p-3 md:p-4" style={{ 
+                borderBottom: '2px solid rgba(74, 203, 191, 0.3)',
+                background: 'rgba(10, 25, 41, 0.95)'
               }}>
-                <div className="flex items-center gap-3">
-                  <img 
-                    src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
-                    alt="Glytch"
-                    className="h-8 w-8 md:h-10 md:w-10 rounded-lg object-cover"
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <AnimatedHorse 
+                    isThinking={isProcessing}
+                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover flex-shrink-0"
                   />
-                  <div>
-                    <h2 className="font-semibold text-sm md:text-base" style={{ color: '#ffffff' }}>Glytch AI Butler</h2>
-                    <p className="text-xs" style={{ color: '#9ea7b5' }}>Your lead generation assistant</p>
+                  <div className="min-w-0">
+                    <h2 className="font-bold text-xs sm:text-sm md:text-base truncate" style={{ color: '#f8d417' }}>GLYTCH</h2>
+                    <p className="text-xs truncate" style={{ color: '#9ea7b5' }}>AI Lead Butler</p>
                   </div>
                 </div>
               </div>
 
-              <div className="h-[400px] md:h-[500px] overflow-y-auto p-4 md:p-6 space-y-4" style={{ background: '#020813' }}>
+              <div className="h-[350px] sm:h-[400px] md:h-[500px] overflow-y-auto p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4" style={{ background: '#0a1929' }}>
                 {messages && messages.length > 0 ? (
                   messages.map((message, idx) => (
                     <MessageBubble key={idx} message={message} />
@@ -202,9 +208,9 @@ export default function Dashboard() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="p-3 md:p-4" style={{ 
-                borderTop: '1px solid rgba(31, 111, 197, 0.2)',
-                background: 'rgba(7, 26, 44, 0.8)'
+              <div className="p-2.5 sm:p-3 md:p-4" style={{ 
+                borderTop: '2px solid rgba(74, 203, 191, 0.3)',
+                background: 'rgba(10, 25, 41, 0.95)'
               }}>
                 <div className="flex flex-col items-center gap-3 md:gap-4">
                   <VoiceInput 
@@ -213,31 +219,31 @@ export default function Dashboard() {
                     autoRestart={true}
                   />
                   
-                  <div className="w-full flex gap-2">
-                    <form onSubmit={handleTextSubmit} className="flex-1 flex gap-2">
+                  <div className="w-full flex gap-1.5 sm:gap-2">
+                    <form onSubmit={handleTextSubmit} className="flex-1 flex gap-1.5 sm:gap-2">
                       <Input
                         value={textInput}
                         onChange={(e) => setTextInput(e.target.value)}
-                        placeholder="Or type your request..."
+                        placeholder="Type your request..."
                         style={{
-                          background: '#071a2c',
-                          borderColor: '#5e6a78',
+                          background: '#0a1929',
+                          borderColor: '#4acbbf',
                           color: '#ffffff'
                         }}
-                        className="placeholder:text-[#9ea7b5] text-sm"
+                        className="placeholder:text-[#9ea7b5] text-xs sm:text-sm"
                         disabled={isProcessing}
                       />
                       <Button 
                         type="submit" 
                         disabled={isProcessing || !textInput.trim()}
-                        className="rounded-full transition-all hover:shadow-lg"
+                        className="rounded-full transition-all hover:shadow-xl flex-shrink-0"
                         size="icon"
                         style={{
-                          background: '#1f6fc5',
-                          color: '#ffffff'
+                          background: 'linear-gradient(135deg, #54b0e7 0%, #4acbbf 100%)',
+                          color: '#0a1929'
                         }}
                       >
-                        <Send className="h-4 w-4" />
+                        <Send className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                     </form>
                   </div>
@@ -247,76 +253,79 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Stats - Hidden on mobile */}
-          <div className="hidden md:block space-y-4">
+          <div className="hidden lg:block space-y-4">
             <div className="rounded-2xl p-4 md:p-6" style={{ 
-              background: '#071a2c',
-              border: '1px solid rgba(31, 111, 197, 0.3)'
+              background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+              border: '2px solid #f8d417'
             }}>
-              <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4" style={{ color: '#ffffff' }}>Quick Actions</h3>
+              <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: '#f8d417' }}>Quick Actions</h3>
               <div className="space-y-2 md:space-y-3">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start rounded-lg transition-all text-sm"
+                  className="w-full justify-start rounded-lg transition-all text-sm hover:border-2"
                   style={{
-                    borderColor: '#5e6a78',
-                    color: '#d7dde5'
+                    borderColor: '#54b0e7',
+                    color: '#ffffff',
+                    background: 'rgba(84, 176, 231, 0.1)'
                   }}
                   onClick={() => sendMessage("Show me influencers with over 10k followers")}
                   disabled={isProcessing}
                 >
-                  <Sparkles className="h-3 w-3 md:h-4 md:w-4 mr-2" style={{ color: '#1f6fc5' }} />
-                  <span className="truncate">Find Top Influencers</span>
+                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#f8d417' }} />
+                  <span className="truncate">Top Influencers</span>
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start rounded-lg transition-all"
+                  className="w-full justify-start rounded-lg transition-all hover:border-2"
                   style={{
-                    borderColor: '#5e6a78',
-                    color: '#d7dde5'
+                    borderColor: '#4acbbf',
+                    color: '#ffffff',
+                    background: 'rgba(74, 203, 191, 0.1)'
                   }}
                   onClick={() => sendMessage("Find leads with email addresses")}
                   disabled={isProcessing}
                 >
-                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#1f6fc5' }} />
+                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#4acbbf' }} />
                   Leads with Emails
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start rounded-lg transition-all"
+                  className="w-full justify-start rounded-lg transition-all hover:border-2"
                   style={{
-                    borderColor: '#5e6a78',
-                    color: '#d7dde5'
+                    borderColor: '#f66c25',
+                    color: '#ffffff',
+                    background: 'rgba(246, 108, 37, 0.1)'
                   }}
                   onClick={() => sendMessage("Show me business accounts with websites")}
                   disabled={isProcessing}
                 >
-                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#26c485' }} />
+                  <Sparkles className="h-4 w-4 mr-2" style={{ color: '#f66c25' }} />
                   Business Accounts
                 </Button>
               </div>
             </div>
 
             <div className="rounded-2xl p-6" style={{ 
-              background: '#071a2c',
-              border: '1px solid rgba(94, 106, 120, 0.3)'
+              background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+              border: '2px solid #f66c25'
             }}>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: '#ffffff' }}>Voice Commands</h3>
+              <h3 className="text-lg font-bold mb-2" style={{ color: '#f66c25' }}>Voice Commands</h3>
               <p className="text-sm mb-4" style={{ color: '#9ea7b5' }}>Try saying:</p>
-              <ul className="space-y-2 text-xs" style={{ color: '#9ea7b5' }}>
+              <ul className="space-y-2 text-xs" style={{ color: '#d7dde5' }}>
                 <li className="flex items-start gap-2">
-                  <span style={{ color: '#1f6fc5' }}>•</span>
+                  <span style={{ color: '#f8d417' }}>•</span>
                   <span>"Find fitness coaches in California"</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span style={{ color: '#1f6fc5' }}>•</span>
+                  <span style={{ color: '#4acbbf' }}>•</span>
                   <span>"Show leads with 50k+ followers"</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span style={{ color: '#1f6fc5' }}>•</span>
+                  <span style={{ color: '#54b0e7' }}>•</span>
                   <span>"Get me beauty influencers"</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span style={{ color: '#1f6fc5' }}>•</span>
+                  <span style={{ color: '#f66c25' }}>•</span>
                   <span>"Leads in the 310 area code"</span>
                 </li>
               </ul>

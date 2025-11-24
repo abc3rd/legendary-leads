@@ -27,15 +27,15 @@ const FunctionDisplay = ({ toolCall }) => {
     
     const statusConfig = {
         pending: { icon: Clock, color: '#9ea7b5', text: 'Pending' },
-        running: { icon: Loader2, color: '#1f6fc5', text: 'Searching...', spin: true },
-        in_progress: { icon: Loader2, color: '#1f6fc5', text: 'Searching...', spin: true },
+        running: { icon: Loader2, color: '#54b0e7', text: 'Searching...', spin: true },
+        in_progress: { icon: Loader2, color: '#54b0e7', text: 'Searching...', spin: true },
         completed: isError ? 
-            { icon: AlertCircle, color: '#c0392b', text: 'Failed' } : 
-            { icon: CheckCircle2, color: '#26c485', text: 'Complete' },
-        success: { icon: CheckCircle2, color: '#26c485', text: 'Complete' },
-        failed: { icon: AlertCircle, color: '#c0392b', text: 'Failed' },
-        error: { icon: AlertCircle, color: '#c0392b', text: 'Failed' }
-    }[status] || { icon: Zap, color: '#1f6fc5', text: '' };
+            { icon: AlertCircle, color: '#f66c25', text: 'Failed' } : 
+            { icon: CheckCircle2, color: '#4acbbf', text: 'Complete' },
+        success: { icon: CheckCircle2, color: '#4acbbf', text: 'Complete' },
+        failed: { icon: AlertCircle, color: '#f66c25', text: 'Failed' },
+        error: { icon: AlertCircle, color: '#f66c25', text: 'Failed' }
+    }[status] || { icon: Zap, color: '#54b0e7', text: '' };
     
     const Icon = statusConfig.icon;
     const formattedName = name.split('.').reverse().join(' ').toLowerCase();
@@ -46,8 +46,8 @@ const FunctionDisplay = ({ toolCall }) => {
                 onClick={() => setExpanded(!expanded)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
                 style={{
-                    background: expanded ? 'rgba(7, 26, 44, 0.5)' : 'rgba(2, 8, 19, 0.5)',
-                    borderColor: expanded ? 'rgba(31, 111, 197, 0.3)' : '#5e6a78'
+                    background: expanded ? 'rgba(84, 176, 231, 0.2)' : 'rgba(10, 25, 41, 0.5)',
+                    borderColor: expanded ? '#54b0e7' : '#5e6a78'
                 }}
             >
                 <Icon className={cn("h-3 w-3", statusConfig.spin && "animate-spin")} style={{ color: statusConfig.color }} />
@@ -115,10 +115,10 @@ const ResultsSection = ({ toolCall }) => {
     }
     
     return (
-        <div className="mt-3 rounded-xl overflow-hidden" style={{ background: '#020813', border: '1px solid #5e6a78' }}>
-            <div className="px-3 py-2 flex items-center gap-2" style={{ background: '#071a2c', borderBottom: '1px solid #5e6a78' }}>
-                <div className="h-2 w-2 rounded-full" style={{ background: resultType === 'database' ? '#26c485' : '#1f6fc5' }} />
-                <span className="text-xs font-semibold" style={{ color: '#d7dde5' }}>
+        <div className="mt-3 rounded-xl overflow-hidden" style={{ background: '#0a1929', border: '2px solid #4acbbf' }}>
+            <div className="px-3 py-2 flex items-center gap-2" style={{ background: 'rgba(74, 203, 191, 0.1)', borderBottom: '1px solid #4acbbf' }}>
+                <div className="h-2 w-2 rounded-full" style={{ background: resultType === 'database' ? '#4acbbf' : '#54b0e7' }} />
+                <span className="text-xs font-semibold" style={{ color: '#f8d417' }}>
                     {resultType === 'database' ? '📊 Database Results' : '🌐 Web Search Results'}
                 </span>
             </div>
@@ -157,23 +157,23 @@ export default function MessageBubble({ message }) {
     });
     
     return (
-        <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
+        <div className={cn("flex gap-2 sm:gap-3", isUser ? "justify-end" : "justify-start")}>
             {!isUser && (
                 <img 
-                  src="https://storage.googleapis.com/msgsndr/y4ABqxnk279eDc0f5DqY/media/691cfff141c501118d8faf6e.png" 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/691ccbe8057765b3fc1fdb65/dd282f7ea_LL-Logo1024x1024.png" 
                   alt="Glytch"
-                  className="h-8 w-8 rounded-lg object-cover mt-0.5 shadow-lg flex-shrink-0"
+                  className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg object-cover mt-0.5 shadow-lg flex-shrink-0"
                 />
             )}
             <div className={cn("max-w-[85%] w-full", isUser && "flex flex-col items-end")}>
                 {message.content && (
-                    <div className="rounded-2xl px-4 py-2.5" style={{
-                        background: isUser ? '#1f6fc5' : '#071a2c',
-                        color: '#ffffff',
-                        border: isUser ? 'none' : '1px solid #5e6a78'
+                    <div className="rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5" style={{
+                        background: isUser ? 'linear-gradient(135deg, #54b0e7 0%, #4acbbf 100%)' : 'rgba(10, 25, 41, 0.8)',
+                        color: isUser ? '#0a1929' : '#ffffff',
+                        border: isUser ? 'none' : '1px solid #4acbbf'
                     }}>
                         {isUser ? (
-                            <p className="text-sm leading-relaxed">{message.content}</p>
+                            <p className="text-xs sm:text-sm leading-relaxed font-medium">{message.content}</p>
                         ) : (
                             <ReactMarkdown 
                                 className="text-sm prose prose-invert prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"

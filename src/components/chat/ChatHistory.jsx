@@ -108,10 +108,10 @@ export default function ChatHistory({ currentConversationId, onSelectConversatio
       <div className="p-4 border-b" style={{ borderColor: '#5e6a78' }}>
         <Button 
           onClick={onNewChat}
-          className="w-full"
+          className="w-full font-semibold"
           style={{
-            background: '#1f6fc5',
-            color: '#ffffff'
+            background: 'linear-gradient(135deg, #f8d417 0%, #4acbbf 100%)',
+            color: '#0a1929'
           }}
         >
           + New Chat
@@ -128,15 +128,15 @@ export default function ChatHistory({ currentConversationId, onSelectConversatio
             <div key={label} className="mb-2">
               <button
                 onClick={() => toggleDateGroup(label)}
-                className="w-full px-4 py-2 flex items-center gap-2 hover:bg-opacity-50 transition-all"
-                style={{ background: 'rgba(7, 26, 44, 0.3)' }}
+                className="w-full px-3 sm:px-4 py-2 flex items-center gap-2 hover:bg-opacity-50 transition-all"
+                style={{ background: 'rgba(74, 203, 191, 0.1)' }}
               >
                 {expandedDates.has(label) ? (
-                  <ChevronDown className="h-4 w-4" style={{ color: '#9ea7b5' }} />
+                  <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" style={{ color: '#4acbbf' }} />
                 ) : (
-                  <ChevronRight className="h-4 w-4" style={{ color: '#9ea7b5' }} />
+                  <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" style={{ color: '#4acbbf' }} />
                 )}
-                <span className="text-sm font-semibold" style={{ color: '#d7dde5' }}>
+                <span className="text-xs sm:text-sm font-semibold" style={{ color: '#f8d417' }}>
                   {label} ({convos.length})
                 </span>
               </button>
@@ -148,20 +148,21 @@ export default function ChatHistory({ currentConversationId, onSelectConversatio
                       key={convo.id}
                       onClick={() => onSelectConversation(convo.id)}
                       className={cn(
-                        "w-full px-3 py-2 rounded-lg flex items-start gap-2 group transition-all text-left",
+                        "w-full px-2 sm:px-3 py-2 rounded-lg flex items-start gap-2 group transition-all text-left",
                         convo.id === currentConversationId
                           ? "bg-opacity-100"
                           : "hover:bg-opacity-50"
                       )}
                       style={{
                         background: convo.id === currentConversationId 
-                          ? 'rgba(31, 111, 197, 0.3)' 
-                          : 'rgba(7, 26, 44, 0.2)'
+                          ? 'rgba(84, 176, 231, 0.3)' 
+                          : 'rgba(10, 25, 41, 0.2)',
+                        borderLeft: convo.id === currentConversationId ? '3px solid #f8d417' : 'none'
                       }}
                     >
-                      <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#1f6fc5' }} />
+                      <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" style={{ color: '#54b0e7' }} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate" style={{ color: '#d7dde5' }}>
+                        <p className="text-xs sm:text-sm truncate" style={{ color: '#d7dde5' }}>
                           {getPreviewText(convo)}
                         </p>
                         <p className="text-xs" style={{ color: '#9ea7b5' }}>
@@ -170,9 +171,9 @@ export default function ChatHistory({ currentConversationId, onSelectConversatio
                       </div>
                       <button
                         onClick={(e) => deleteConversation(convo.id, e)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-600/20 rounded"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-600/20 rounded flex-shrink-0"
                       >
-                        <Trash2 className="h-3 w-3" style={{ color: '#c0392b' }} />
+                        <Trash2 className="h-3 w-3" style={{ color: '#f66c25' }} />
                       </button>
                     </button>
                   ))}
