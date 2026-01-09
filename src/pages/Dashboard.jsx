@@ -10,7 +10,7 @@ import AnimatedHorse from '../components/ui/AnimatedHorse';
 import LeadCard from '../components/leads/LeadCard';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useAuthStatus } from '../hooks/useAuthStatus';
+import { useAuthStatus } from '../components/hooks/useAuthStatus';
 
 export default function Dashboard() {
   const { authState, user, signIn } = useAuthStatus();
