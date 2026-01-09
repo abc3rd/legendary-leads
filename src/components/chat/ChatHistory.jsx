@@ -5,15 +5,19 @@ import { Trash2, MessageSquare, ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import moment from 'moment';
 
-export default function ChatHistory({ currentConversationId, onSelectConversation, onNewChat }) {
+export default function ChatHistory({ authState, currentConversationId, onSelectConversation, onNewChat }) {
   const [conversations, setConversations] = useState([]);
   const [groupedConvos, setGroupedConvos] = useState({});
   const [expandedDates, setExpandedDates] = useState(new Set(['Today']));
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadConversations();
-  }, []);
+    if (authState === 'signed_in') {
+      loadConversations();
+    } else {
+      setIsLoading(false);
+    }
+  }, [authState]);
 
   const loadConversations = async () => {
     try {
@@ -30,6 +34,10 @@ export default function ChatHistory({ currentConversationId, onSelectConversatio
       groupByDate(sorted);
     } catch (error) {
       console.error('Failed to load conversations:', error);
+      if (error.response?.status === 401) {
+        setConversations([]);
+        setGroupedConvos({});
+      }
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +102,16 @@ export default function ChatHistory({ currentConversationId, onSelectConversatio
     const firstUserMsg = convo.messages?.find(m => m.role === 'user');
     return firstUserMsg?.content?.substring(0, 40) || 'New conversation';
   };
+
+  if (authState !== 'signed_in') {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+        <p className="text-sm" style={{ color: '#9ea7b5' }}>
+          Sign in to view chat history
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

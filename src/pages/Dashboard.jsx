@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Upload, Download, Sparkles, Send, Loader2, Menu, X } from 'lucide-react';
+import { Upload, Download, Sparkles, Send, Loader2, Menu, X, LogIn } from 'lucide-react';
 import VoiceInput from '../components/voice/VoiceInput';
 import MessageBubble from '../components/chat/MessageBubble';
 import ChatHistory from '../components/chat/ChatHistory';
@@ -10,8 +10,10 @@ import AnimatedHorse from '../components/ui/AnimatedHorse';
 import LeadCard from '../components/leads/LeadCard';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useAuthStatus } from '../hooks/useAuthStatus';
 
 export default function Dashboard() {
+  const { authState, user, signIn } = useAuthStatus();
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [textInput, setTextInput] = useState('');
@@ -19,10 +21,14 @@ export default function Dashboard() {
   const [filteredLeads, setFilteredLeads] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef(null);
+  const initRef = useRef(false);
 
   useEffect(() => {
-    initConversation();
-  }, []);
+    if (authState === 'signed_in' && !initRef.current) {
+      initRef.current = true;
+      initConversation();
+    }
+  }, [authState]);
 
   useEffect(() => {
     if (conversation?.id) {
@@ -61,6 +67,9 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.error('Failed to init conversation:', error);
+      if (error.response?.status === 401) {
+        initRef.current = false;
+      }
     }
   };
 
@@ -76,12 +85,14 @@ export default function Dashboard() {
   };
 
   const handleNewChat = () => {
-    initConversation();
-    setShowHistory(false);
+    if (authState === 'signed_in') {
+      initConversation();
+      setShowHistory(false);
+    }
   };
 
   const sendMessage = async (text) => {
-    if (!text.trim() || !conversation || isProcessing) return;
+    if (!text.trim() || !conversation || isProcessing || authState !== 'signed_in') return;
 
     setTextInput('');
     setIsProcessing(true);
@@ -93,6 +104,9 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.error('Failed to send message:', error);
+      if (error.response?.status === 401) {
+        initRef.current = false;
+      }
       setIsProcessing(false);
     }
   };
@@ -105,6 +119,52 @@ export default function Dashboard() {
     e.preventDefault();
     sendMessage(textInput);
   };
+
+  if (authState === 'checking') {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a1929' }}>
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" style={{ color: '#4acbbf' }} />
+          <p style={{ color: '#9ea7b5' }}>Checking session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authState === 'signed_out') {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#0a1929' }}>
+        <div className="max-w-md w-full rounded-2xl p-8 text-center" style={{ 
+          background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+          border: '2px solid #4acbbf'
+        }}>
+          <AnimatedHorse isThinking={false} className="h-24 w-24 mx-auto mb-6 rounded-xl" />
+          <h1 className="text-3xl font-bold mb-4" style={{ 
+            fontFamily: 'Poppins, sans-serif',
+            background: 'linear-gradient(135deg, #f8d417 0%, #4acbbf 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            Sign In Required
+          </h1>
+          <p className="mb-8" style={{ color: '#9ea7b5' }}>
+            You must be signed in to start a conversation with GLYTCH.
+          </p>
+          <Button
+            onClick={signIn}
+            className="w-full font-semibold py-6"
+            style={{
+              background: 'linear-gradient(135deg, #f8d417 0%, #4acbbf 100%)',
+              color: '#0a1929'
+            }}
+          >
+            <LogIn className="h-5 w-5 mr-2" />
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ background: '#0a1929' }}>
@@ -150,13 +210,14 @@ export default function Dashboard() {
                   </Button>
                 </div>
                 <ChatHistory 
+                  authState={authState}
                   currentConversationId={conversation?.id}
                   onSelectConversation={loadConversation}
                   onNewChat={handleNewChat}
                 />
-              </div>
-            </div>
-          )}
+                </div>
+                </div>
+                )}
 
           {/* Desktop History Sidebar */}
           <div className="hidden lg:block lg:col-span-1">
@@ -165,6 +226,7 @@ export default function Dashboard() {
               border: '2px solid #4acbbf'
             }}>
               <ChatHistory 
+                authState={authState}
                 currentConversationId={conversation?.id}
                 onSelectConversation={loadConversation}
                 onNewChat={handleNewChat}
