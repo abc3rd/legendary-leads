@@ -1,301 +1,309 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Upload, CheckCircle2, AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle, ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 
+// ─── Validators ─────────────────────────────────────────────────────────────
+const isValidEmail = (email) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(email).trim());
+
+const normalizePhone = (phone) => {
+  if (!phone) return null;
+  const digits = String(phone).replace(/\D/g, '');
+  // Valid: 10–15 digits (E.164 range)
+  if (digits.length < 10 || digits.length > 15) return null;
+  return phone.trim();
+};
+
+// ─── Streaming line reader ───────────────────────────────────────────────────
+async function* readLines(file) {
+  const reader = file.stream().getReader();
+  const decoder = new TextDecoder('utf-8');
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      if (buffer.trim()) yield buffer;
+      break;
+    }
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
+    for (const line of lines) {
+      if (line.trim()) yield line;
+    }
+  }
+}
+
+// ─── CSV row parser (handles quotes) ────────────────────────────────────────
+function parseRow(line) {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"' && inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+    else if (char === '"') { inQuotes = !inQuotes; }
+    else if (char === ',' && !inQuotes) { values.push(current); current = ''; }
+    else { current += char; }
+  }
+  values.push(current);
+  return values.map(v => v.trim().replace(/^["']|["']$/g, ''));
+}
+
+// ─── Map header → field name ─────────────────────────────────────────────────
+function mapHeader(h) {
+  const k = h.toLowerCase().replace(/[_\s-]/g, '');
+  if (k.match(/user(name)?$/)) return 'username';
+  if (k.match(/^(full)?name$/)) return 'name';
+  if (k.match(/bio|description|about/)) return 'bio';
+  if (k.match(/categor|niche|type|industry/)) return 'category';
+  if (k.match(/website|url|link/)) return 'website';
+  if (k.match(/follower(?!ing)/)) return 'followerCount';
+  if (k.match(/following/)) return 'followingCount';
+  if (k.match(/e?mail/)) return 'email';
+  if (k.match(/phone|tel|mobile|contact/)) return 'phone';
+  if (k.match(/tag|label/)) return 'tag';
+  if (k.match(/status|stage/)) return 'status';
+  return null;
+}
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 export default function Import() {
   const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(null);
-  const [user, setUser] = useState(null);
+  const [stats, setStats] = useState(null);
 
   React.useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      } catch (error) {
-        console.error('Auth error:', error);
-        toast.error('Please log in to import leads');
-      }
-    };
-    checkAuth();
+    base44.auth.me().catch(() => toast.error('Please log in to import leads'));
   }, []);
 
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files).filter(f => f.type === 'text/csv');
-    if (selectedFiles.length > 0) {
-      setFiles(selectedFiles);
-      setProgress(null);
-    } else {
-      toast.error('Please select valid CSV files');
-    }
-  };
-
-  const parseCSV = (text) => {
-    const lines = text.split('\n').filter(line => line.trim());
-    if (lines.length === 0) return [];
-    
-    console.log('Total lines:', lines.length);
-    console.log('First 3 lines:', lines.slice(0, 3));
-    
-    // Parse header row properly handling quotes
-    const parseRow = (line) => {
-      const values = [];
-      let current = '';
-      let inQuotes = false;
-      
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        const nextChar = line[i + 1];
-        
-        if (char === '"' && inQuotes && nextChar === '"') {
-          current += '"';
-          i++;
-        } else if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          values.push(current);
-          current = '';
-        } else {
-          current += char;
-        }
-      }
-      values.push(current);
-      return values.map(v => v.trim().replace(/^["']|["']$/g, ''));
-    };
-    
-    const headers = parseRow(lines[0]).map(h => h.toLowerCase().replace(/[_\s-]/g, ''));
-    console.log('Parsed headers:', headers);
-    
-    const rows = [];
-    
-    for (let i = 1; i < lines.length; i++) {
-      const values = parseRow(lines[i]);
-      const row = {};
-      
-      headers.forEach((header, index) => {
-        const value = (values[index] || '').trim();
-        if (!value) return;
-        
-        // More flexible field mapping
-        if (header.match(/user(name)?$/i)) row.username = value;
-        else if (header.match(/^(full)?name$/i) || header === 'name') row.name = value;
-        else if (header.match(/bio|description|about/i)) row.bio = value;
-        else if (header.match(/categor|niche|type|industry/i)) row.category = value;
-        else if (header.match(/website|url|link/i)) row.website = value;
-        else if (header.match(/follower/i)) {
-          const num = parseInt(value.replace(/[^0-9]/g, ''));
-          if (!isNaN(num) && num >= 0) row.followerCount = num;
-        }
-        else if (header.match(/following/i)) {
-          const num = parseInt(value.replace(/[^0-9]/g, ''));
-          if (!isNaN(num) && num >= 0) row.followingCount = num;
-        }
-        else if (header.match(/e?mail/i)) row.email = value;
-        else if (header.match(/phone|tel|mobile|contact/i)) row.phone = value;
-        else if (header.match(/tag|label/i)) row.tag = value;
-        else if (header.match(/status|stage/i)) row.status = value;
-      });
-      
-      // Only add rows with at least username OR email
-      if (row.username || row.email) {
-        rows.push(row);
-      }
-    }
-    
-    console.log('Parsed rows sample (first 3):', rows.slice(0, 3));
-    console.log('Total valid rows:', rows.length);
-    return rows;
+    const selected = Array.from(e.target.files).filter(f =>
+      f.name.endsWith('.csv') || f.type === 'text/csv'
+    );
+    if (selected.length > 0) { setFiles(selected); setProgress(null); setStats(null); }
+    else toast.error('Please select valid CSV files');
   };
 
   const handleImport = async () => {
     if (files.length === 0) return;
-
-    if (!user) {
-      toast.error('You must be logged in to import leads');
-      return;
-    }
-
     setIsUploading(true);
+    setStats(null);
+
+    let totalParsed = 0;
     let totalImported = 0;
+    let totalSkipped = 0;
+    let invalidEmails = 0;
+    let invalidPhones = 0;
+
+    const CHUNK_SIZE = 200;
 
     try {
-      for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
-        const file = files[fileIndex];
-        setProgress({ 
-          status: 'processing', 
-          message: `Processing file ${fileIndex + 1}/${files.length}: ${file.name}...` 
-        });
+      for (let fi = 0; fi < files.length; fi++) {
+        const file = files[fi];
+        setProgress({ status: 'processing', message: `Reading ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)...` });
 
-        // Read CSV directly
-        const text = await file.text();
-        const leads = parseCSV(text);
-        
-        if (leads.length === 0) {
-          toast.error(`No valid data found in ${file.name}`);
-          continue;
-        }
+        let headers = null;
+        let chunk = [];
 
-        setProgress({ 
-          status: 'importing', 
-          message: `Importing ${leads.length} leads from ${file.name}...` 
-        });
+        const flushChunk = async () => {
+          if (chunk.length === 0) return;
+          await base44.entities.Lead.bulkCreate(chunk);
+          totalImported += chunk.length;
+          chunk = [];
+          setProgress({
+            status: 'importing',
+            message: `Imported ${totalImported.toLocaleString()} leads... (file ${fi + 1}/${files.length})`
+          });
+        };
 
-        // Import in smaller chunks with detailed error logging
-        const chunkSize = 50;
-        for (let i = 0; i < leads.length; i += chunkSize) {
-          const chunk = leads.slice(i, i + chunkSize);
-          try {
-            console.log(`Importing chunk ${i}-${i + chunk.length}:`, chunk[0]);
-            const result = await base44.entities.Lead.bulkCreate(chunk);
-            console.log('Chunk result:', result);
-            totalImported += chunk.length;
-            
-            setProgress({ 
-              status: 'importing', 
-              message: `Imported ${totalImported} / ${leads.length} leads...` 
-            });
-          } catch (chunkError) {
-            console.error('CHUNK ERROR:', chunkError);
-            console.error('Error details:', chunkError.message, chunkError.response?.data);
-            console.error('Failed chunk first item:', chunk[0]);
-            toast.error(`Error: ${chunkError.message || 'Unknown error'}. Check console.`);
+        for await (const line of readLines(file)) {
+          if (!headers) {
+            headers = parseRow(line).map(mapHeader);
+            continue;
           }
+
+          totalParsed++;
+          const values = parseRow(line);
+          const row = {};
+
+          headers.forEach((field, idx) => {
+            if (!field) return;
+            const raw = (values[idx] || '').trim();
+            if (!raw) return;
+
+            if (field === 'followerCount' || field === 'followingCount') {
+              const n = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+              if (!isNaN(n)) row[field] = n;
+            } else if (field === 'email') {
+              if (isValidEmail(raw)) { row.email = raw.toLowerCase(); }
+              else { invalidEmails++; }
+            } else if (field === 'phone') {
+              const normalized = normalizePhone(raw);
+              if (normalized) { row.phone = normalized; }
+              else { invalidPhones++; }
+            } else {
+              row[field] = raw;
+            }
+          });
+
+          if (!row.username && !row.email) { totalSkipped++; continue; }
+
+          chunk.push(row);
+          if (chunk.length >= CHUNK_SIZE) await flushChunk();
         }
+
+        await flushChunk(); // Final flush
       }
 
-      setProgress({ 
-        status: 'success', 
-        message: `Successfully imported ${totalImported} leads from ${files.length} file(s)!` 
-      });
-      
-      toast.success(`Imported ${totalImported} leads!`);
+      const finalStats = { totalParsed, totalImported, totalSkipped, invalidEmails, invalidPhones };
+      setStats(finalStats);
+      setProgress({ status: 'success', message: `Done! Imported ${totalImported.toLocaleString()} leads.` });
+      toast.success(`Imported ${totalImported.toLocaleString()} leads!`);
       setFiles([]);
-
     } catch (error) {
       console.error('Import error:', error);
-      setProgress({ 
-        status: 'error', 
-        message: error.message || 'Failed to import leads' 
-      });
-      toast.error('Import failed. Please check your CSV format.');
+      setProgress({ status: 'error', message: error.message || 'Import failed' });
+      toast.error('Import failed. Check console for details.');
     } finally {
       setIsUploading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black p-6">
+    <div className="min-h-screen p-4 sm:p-6" style={{ background: '#0a1929' }}>
       <div className="max-w-3xl mx-auto">
         <Link to={createPageUrl('Dashboard')}>
-          <Button variant="ghost" className="mb-6 text-gray-400 hover:text-white">
+          <Button variant="ghost" className="mb-6" style={{ color: '#9ea7b5' }}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
         </Link>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800 shadow-2xl p-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Import Leads</h1>
-          <p className="text-gray-400 mb-8">
-            Upload your CSV file with Instagram lead data
+        <div className="rounded-2xl shadow-2xl p-6 sm:p-8" style={{
+          background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+          border: '2px solid #4acbbf'
+        }}>
+          <h1 className="text-3xl font-bold mb-1" style={{ color: '#f8d417', fontFamily: 'Poppins, sans-serif' }}>Import Leads</h1>
+          <p className="mb-6 text-sm" style={{ color: '#9ea7b5' }}>
+            Upload large CSV files — streamed line-by-line for memory efficiency. Supports millions of rows.
           </p>
 
-          <div className="space-y-6">
-            {/* CSV Format Info */}
-            <div className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-purple-500/30 rounded-xl p-6">
-              <h3 className="font-semibold text-white mb-3">Required CSV Format</h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Your CSV should contain these columns in order:
-              </p>
-              <div className="bg-gray-950 rounded-lg p-4 font-mono text-xs text-gray-300 overflow-x-auto">
-                username, name, bio, category, website, followerCount, followingCount, email, phone
-              </div>
-              <p className="text-xs text-gray-500 mt-3">
-                * Column names can be in any case (e.g., "followerCount", "follower_count", or "Follower Count")
-              </p>
+          {/* Validation badge */}
+          <div className="flex items-center gap-2 mb-6 px-4 py-2 rounded-xl text-sm" style={{
+            background: 'rgba(74,203,191,0.1)', border: '1px solid #4acbbf'
+          }}>
+            <ShieldCheck className="h-4 w-4 flex-shrink-0" style={{ color: '#4acbbf' }} />
+            <span style={{ color: '#d7dde5' }}>
+              <strong style={{ color: '#4acbbf' }}>Email & phone validated</strong> on upload — invalid entries are skipped &amp; counted
+            </span>
+          </div>
+
+          {/* CSV Format */}
+          <div className="mb-6 rounded-xl p-4" style={{ background: 'rgba(84,176,231,0.07)', border: '1px solid rgba(84,176,231,0.3)' }}>
+            <h3 className="font-semibold mb-2 text-sm" style={{ color: '#54b0e7' }}>Supported CSV Columns</h3>
+            <div className="rounded-lg p-3 font-mono text-xs overflow-x-auto" style={{ background: '#071a2c', color: '#d7dde5' }}>
+              username, name, bio, category, website, followerCount, followingCount, email, phone, tag, status
             </div>
+            <p className="text-xs mt-2" style={{ color: '#9ea7b5' }}>Column names are flexible (e.g. "Follower Count", "follower_count", "followers" all map correctly)</p>
+          </div>
 
-            {/* File Upload */}
-            <div className="border-2 border-dashed border-gray-700 rounded-xl p-12 text-center hover:border-purple-500/50 transition-all">
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileChange}
-                className="hidden"
-                id="csv-upload"
-                disabled={isUploading}
-                multiple
-              />
-              <label 
-                htmlFor="csv-upload" 
-                className="cursor-pointer flex flex-col items-center gap-4"
-              >
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                  <Upload className="h-8 w-8 text-white" />
-                </div>
-                {files.length > 0 ? (
-                  <>
-                    <p className="text-white font-semibold">{files.length} file(s) selected</p>
-                    <div className="text-sm text-gray-400 space-y-1">
-                      {files.map((f, i) => (
-                        <div key={i}>{f.name} ({(f.size / 1024 / 1024).toFixed(2)} MB)</div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-white font-semibold">Click to upload CSV files</p>
-                    <p className="text-sm text-gray-400">Select one or multiple files</p>
-                  </>
-                )}
-              </label>
-            </div>
-
-            {/* Progress */}
-            {progress && (
-              <div className={`rounded-xl p-6 border ${
-                progress.status === 'success' 
-                  ? 'bg-green-900/20 border-green-500/30' 
-                  : progress.status === 'error'
-                  ? 'bg-red-900/20 border-red-500/30'
-                  : 'bg-blue-900/20 border-blue-500/30'
-              }`}>
-                <div className="flex items-center gap-3">
-                  {progress.status === 'success' ? (
-                    <CheckCircle2 className="h-6 w-6 text-green-400" />
-                  ) : progress.status === 'error' ? (
-                    <AlertCircle className="h-6 w-6 text-red-400" />
-                  ) : (
-                    <Loader2 className="h-6 w-6 text-blue-400 animate-spin" />
-                  )}
-                  <p className="text-white font-medium">{progress.message}</p>
-                </div>
+          {/* Drop Zone */}
+          <div
+            className="rounded-xl p-10 text-center mb-6 transition-all"
+            style={{
+              border: `2px dashed ${files.length > 0 ? '#4acbbf' : '#5e6a78'}`,
+              background: files.length > 0 ? 'rgba(74,203,191,0.05)' : 'transparent'
+            }}
+          >
+            <input type="file" accept=".csv,text/csv" onChange={handleFileChange}
+              className="hidden" id="csv-upload" disabled={isUploading} multiple />
+            <label htmlFor="csv-upload" className="cursor-pointer flex flex-col items-center gap-3">
+              <div className="h-14 w-14 rounded-full flex items-center justify-center" style={{
+                background: 'linear-gradient(135deg, #54b0e7 0%, #4acbbf 100%)'
+              }}>
+                <Upload className="h-7 w-7" style={{ color: '#0a1929' }} />
               </div>
-            )}
-
-            {/* Import Button */}
-            <Button
-              onClick={handleImport}
-              disabled={files.length === 0 || isUploading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-6 text-lg"
-            >
-              {isUploading ? (
+              {files.length > 0 ? (
                 <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Importing...
+                  <p className="font-semibold" style={{ color: '#ffffff' }}>{files.length} file(s) selected</p>
+                  <div className="space-y-1">
+                    {files.map((f, i) => (
+                      <div key={i} className="text-sm" style={{ color: '#9ea7b5' }}>
+                        {f.name} — <span style={{ color: '#4acbbf' }}>{(f.size / 1024 / 1024).toFixed(1)} MB</span>
+                      </div>
+                    ))}
+                  </div>
                 </>
               ) : (
                 <>
-                  <Upload className="h-5 w-5 mr-2" />
-                  Import Leads
+                  <p className="font-semibold" style={{ color: '#ffffff' }}>Click to upload CSV files</p>
+                  <p className="text-sm" style={{ color: '#9ea7b5' }}>No file size limit — streamed for performance</p>
                 </>
               )}
-            </Button>
+            </label>
           </div>
+
+          {/* Progress */}
+          {progress && (
+            <div className="rounded-xl p-4 mb-4 flex items-center gap-3" style={{
+              background: progress.status === 'success' ? 'rgba(46,204,113,0.1)'
+                : progress.status === 'error' ? 'rgba(192,57,43,0.1)'
+                : 'rgba(84,176,231,0.1)',
+              border: `1px solid ${progress.status === 'success' ? '#2ecc71'
+                : progress.status === 'error' ? '#c0392b' : '#54b0e7'}`
+            }}>
+              {progress.status === 'success' ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" style={{ color: '#2ecc71' }} />
+                : progress.status === 'error' ? <AlertCircle className="h-5 w-5 flex-shrink-0" style={{ color: '#c0392b' }} />
+                : <Loader2 className="h-5 w-5 flex-shrink-0 animate-spin" style={{ color: '#54b0e7' }} />}
+              <p className="font-medium text-sm" style={{ color: '#ffffff' }}>{progress.message}</p>
+            </div>
+          )}
+
+          {/* Validation Stats */}
+          {stats && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+              {[
+                { label: 'Rows Parsed', value: stats.totalParsed.toLocaleString(), color: '#54b0e7' },
+                { label: 'Imported', value: stats.totalImported.toLocaleString(), color: '#4acbbf' },
+                { label: 'Skipped (no ID)', value: stats.totalSkipped.toLocaleString(), color: '#f8d417' },
+                { label: 'Invalid Emails', value: stats.invalidEmails.toLocaleString(), color: '#f66c25' },
+                { label: 'Invalid Phones', value: stats.invalidPhones.toLocaleString(), color: '#f66c25' },
+              ].map(s => (
+                <div key={s.label} className="rounded-xl p-3 text-center" style={{
+                  background: 'rgba(10,25,41,0.8)', border: `1px solid ${s.color}30`
+                }}>
+                  <div className="text-xl font-bold" style={{ color: s.color }}>{s.value}</div>
+                  <div className="text-xs mt-0.5" style={{ color: '#9ea7b5' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Import Button */}
+          <Button
+            onClick={handleImport}
+            disabled={files.length === 0 || isUploading}
+            className="w-full py-6 text-base font-bold"
+            style={{
+              background: 'linear-gradient(135deg, #54b0e7 0%, #4acbbf 100%)',
+              color: '#0a1929',
+              opacity: files.length === 0 || isUploading ? 0.5 : 1
+            }}
+          >
+            {isUploading ? (
+              <><Loader2 className="h-5 w-5 mr-2 animate-spin" />Importing...</>
+            ) : (
+              <><Upload className="h-5 w-5 mr-2" />Import Leads</>
+            )}
+          </Button>
         </div>
       </div>
     </div>
