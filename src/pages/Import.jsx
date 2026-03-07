@@ -169,6 +169,7 @@ export default function Import() {
       setStats(finalStats);
       setProgress({ status: 'success', message: `Done! Imported ${totalImported.toLocaleString()} leads.` });
       toast.success(`Imported ${totalImported.toLocaleString()} leads!`);
+      if (totalImported > 0) markChecked('importLeads');
       setFiles([]);
     } catch (error) {
       console.error('Import error:', error);
