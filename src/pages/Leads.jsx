@@ -27,6 +27,10 @@ export default function Leads() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const queryClient = useQueryClient();
+  const { markChecked } = useOnboarding();
+
+  // Mark "viewLeads" step as done when user lands here
+  React.useEffect(() => { markChecked('viewLeads'); }, []);
 
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ['leads'],
