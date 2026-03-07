@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Upload, Database, Zap, Settings } from 'lucide-react';
+import { Sparkles, Upload, Database, Zap, Settings, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BOTTOM_NAV = [
