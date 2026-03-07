@@ -9,6 +9,7 @@ const BOTTOM_NAV = [
   { name: 'Leads', path: 'Leads', icon: Database },
   { name: 'Import', path: 'Import', icon: Upload },
   { name: 'Sequences', path: 'Sequences', icon: Zap },
+  { name: 'Analytics', path: 'Analytics', icon: TrendingUp },
   { name: 'Settings', path: 'Settings', icon: Settings },
 ];
 
