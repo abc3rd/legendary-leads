@@ -7,9 +7,12 @@ import VoiceInput from '../components/voice/VoiceInput';
 import MessageBubble from '../components/chat/MessageBubble';
 import ChatHistory from '../components/chat/ChatHistory';
 import AnimatedHorse from '../components/ui/AnimatedHorse';
+import FeatureTour from '../components/onboarding/FeatureTour';
+import SetupChecklist from '../components/onboarding/SetupChecklist';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuthStatus } from '@/components/hooks/useAuthStatus';
+import { useOnboarding } from '@/components/hooks/useOnboarding';
 
 export default function Dashboard() {
   const { authState, user, signIn } = useAuthStatus();
