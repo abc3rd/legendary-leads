@@ -25,6 +25,7 @@ const DEFAULT_FILTERS = {
 export default function Leads() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const queryClient = useQueryClient();
 
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ['leads'],
@@ -176,6 +177,9 @@ export default function Leads() {
             />
           </div>
         </div>
+
+        {/* AI Lead Assistant */}
+        <AILeadAssistant onLeadsCreated={() => queryClient.invalidateQueries({ queryKey: ['leads'] })} />
 
         {/* Filters */}
         <LeadFilters
