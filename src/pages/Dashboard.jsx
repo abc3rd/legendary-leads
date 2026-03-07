@@ -171,6 +171,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen" style={{ background: '#0a1929' }}>
+      {/* Feature Tour - shown once to new users */}
+      {!onboarding.tourSeen && authState === 'signed_in' && (
+        <FeatureTour onComplete={markTourSeen} />
+      )}
+
       <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-8">
