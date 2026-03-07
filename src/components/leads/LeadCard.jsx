@@ -13,7 +13,7 @@ const STATUS_COLORS = {
   unresponsive: { bg: '#5e6a78', text: '#fff' },
 };
 
-export default function LeadCard({ lead }) {
+export default function LeadCard({ lead, onEnriched }) {
   const getAreaCode = (phone) => {
     if (!phone) return null;
     const match = phone.match(/\(?(\d{3})\)?/);
@@ -124,6 +124,11 @@ export default function LeadCard({ lead }) {
               <span className="truncate">{lead.website}</span>
             </a>
           )}
+        </div>
+
+        {/* AI Enrich */}
+        <div className="mt-3 pt-2 border-t flex justify-end" style={{ borderColor: 'rgba(94,106,120,0.3)' }}>
+          <EnrichLeadButton lead={lead} onEnriched={onEnriched} />
         </div>
 
         {/* Tag */}
