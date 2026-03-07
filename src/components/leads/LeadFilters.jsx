@@ -225,5 +225,6 @@ export default function LeadFilters({ filters, onChange, categories, tags, total
         </div>
       )}
     </div>
+    </>
   );
 }
