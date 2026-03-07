@@ -14,7 +14,10 @@ import { toast } from 'sonner';
 const TABS = ['Templates', 'Sequences', 'Activity Log'];
 
 export default function Sequences() {
+  const { markChecked } = useOnboarding();
   const [activeTab, setActiveTab] = useState('Sequences');
+
+  useEffect(() => { markChecked('createSequence'); }, []);
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [editingSequence, setEditingSequence] = useState(null);
   const [showTemplateEditor, setShowTemplateEditor] = useState(false);
