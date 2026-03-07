@@ -215,7 +215,7 @@ export default function Leads() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {processedLeads.map((lead) => (
-              <LeadCard key={lead.id} lead={lead} />
+              <LeadCard key={lead.id} lead={lead} onEnriched={() => queryClient.invalidateQueries({ queryKey: ['leads'] })} />
             ))}
           </div>
         )}
