@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Upload, Database } from 'lucide-react';
+import { Sparkles, Upload, Database, Zap } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -9,7 +9,8 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Dashboard', path: 'Dashboard', icon: Sparkles },
     { name: 'Import', path: 'Import', icon: Upload },
-    { name: 'All Leads', path: 'Leads', icon: Database }
+    { name: 'All Leads', path: 'Leads', icon: Database },
+    { name: 'Sequences', path: 'Sequences', icon: Zap },
   ];
 
   const isActive = (pageName) => {
