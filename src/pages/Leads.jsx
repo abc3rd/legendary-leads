@@ -127,6 +127,7 @@ export default function Leads() {
       )
     ].join('\n');
 
+    markChecked('exportCSV');
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -184,7 +185,12 @@ export default function Leads() {
         </div>
 
         {/* AI Lead Assistant */}
-        <AILeadAssistant onLeadsCreated={() => queryClient.invalidateQueries({ queryKey: ['leads'] })} />
+        <AILeadAssistant
+          onLeadsCreated={() => {
+            queryClient.invalidateQueries({ queryKey: ['leads'] });
+            markChecked('useAI');
+          }}
+        />
 
         {/* Filters */}
         <LeadFilters
