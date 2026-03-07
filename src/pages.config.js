@@ -51,6 +51,7 @@ import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Import from './pages/Import';
 import Leads from './pages/Leads';
+import Sequences from './pages/Sequences';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +60,7 @@ export const PAGES = {
     "Home": Home,
     "Import": Import,
     "Leads": Leads,
+    "Sequences": Sequences,
 }
 
 export const pagesConfig = {
