@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,7 @@ export default function Leads() {
   const { markChecked } = useOnboarding();
 
   // Mark "viewLeads" step as done when user lands here
-  React.useEffect(() => { markChecked('viewLeads'); }, []);
+  useEffect(() => { markChecked('viewLeads'); }, []);
 
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ['leads'],
