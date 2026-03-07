@@ -47,8 +47,7 @@ export default function SequenceEditor({ sequence, templates, onClose, onSaved }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
       <div className="w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden" style={{
-        background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
-        border: '2px solid #f8d417'
+        background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)', border: '2px solid #f8d417'
       }}>
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(248,212,23,0.3)' }}>
           <h2 className="text-lg font-bold" style={{ color: '#f8d417', fontFamily: 'Poppins, sans-serif' }}>
@@ -58,14 +57,12 @@ export default function SequenceEditor({ sequence, templates, onClose, onSaved }
         </div>
 
         <div className="p-5 space-y-5 overflow-y-auto" style={{ maxHeight: '70vh' }}>
-          {/* Name */}
           <div>
             <label className="text-xs font-semibold mb-1 block" style={{ color: '#9ea7b5' }}>Sequence Name</label>
             <Input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g., Welcome New Lead"
               style={{ background: '#071a2c', borderColor: '#f8d417', color: '#fff' }} />
           </div>
 
-          {/* Trigger Type */}
           <div>
             <label className="text-xs font-semibold mb-2 block" style={{ color: '#9ea7b5' }}>Trigger Type</label>
             <div className="grid grid-cols-2 gap-2">
@@ -82,7 +79,6 @@ export default function SequenceEditor({ sequence, templates, onClose, onSaved }
             </div>
           </div>
 
-          {/* Status trigger */}
           {form.trigger_type === 'status_change' && (
             <div>
               <label className="text-xs font-semibold mb-2 block" style={{ color: '#9ea7b5' }}>Trigger on Status Change To</label>
@@ -102,17 +98,13 @@ export default function SequenceEditor({ sequence, templates, onClose, onSaved }
             </div>
           )}
 
-          {/* Delay */}
           <div>
-            <label className="text-xs font-semibold mb-1 block" style={{ color: '#9ea7b5' }}>
-              Delay (days) — 0 = send immediately
-            </label>
+            <label className="text-xs font-semibold mb-1 block" style={{ color: '#9ea7b5' }}>Delay (days) — 0 = send immediately</label>
             <Input type="number" min="0" max="365" value={form.delay_days}
               onChange={e => set('delay_days', Number(e.target.value))}
               style={{ background: '#071a2c', borderColor: '#54b0e7', color: '#fff' }} />
           </div>
 
-          {/* Template */}
           <div>
             <label className="text-xs font-semibold mb-2 block" style={{ color: '#9ea7b5' }}>Template to Send</label>
             {templates.length === 0 ? (
@@ -135,18 +127,15 @@ export default function SequenceEditor({ sequence, templates, onClose, onSaved }
             )}
           </div>
 
-          {/* Filters */}
           <div>
             <label className="text-xs font-semibold mb-2 block" style={{ color: '#9ea7b5' }}>Lead Filters (optional)</label>
             <div className="space-y-2">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.filter_has_email} onChange={e => set('filter_has_email', e.target.checked)}
-                  className="accent-cyan-400" />
+                <input type="checkbox" checked={form.filter_has_email} onChange={e => set('filter_has_email', e.target.checked)} className="accent-cyan-400" />
                 <span className="text-sm" style={{ color: '#d7dde5' }}>Only leads with email</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.filter_has_phone} onChange={e => set('filter_has_phone', e.target.checked)}
-                  className="accent-cyan-400" />
+                <input type="checkbox" checked={form.filter_has_phone} onChange={e => set('filter_has_phone', e.target.checked)} className="accent-cyan-400" />
                 <span className="text-sm" style={{ color: '#d7dde5' }}>Only leads with phone</span>
               </label>
               <div className="flex items-center gap-2">
