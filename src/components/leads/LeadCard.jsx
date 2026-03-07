@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Phone, Globe, Users, User, MapPin, Tag } from 'lucide-react';
+import EnrichLeadButton from './EnrichLeadButton';
 
 const STATUS_COLORS = {
   new: { bg: '#4acbbf', text: '#0a1929' },

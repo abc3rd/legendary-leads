@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Search, Download, Loader2 } from 'lucide-react';
 import LeadCard from '../components/leads/LeadCard';
 import LeadFilters from '../components/leads/LeadFilters';
+import AILeadAssistant from '../components/leads/AILeadAssistant';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DEFAULT_FILTERS = {
   category: '',
