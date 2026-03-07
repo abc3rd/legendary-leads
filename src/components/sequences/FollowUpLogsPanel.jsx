@@ -35,7 +35,6 @@ export default function FollowUpLogsPanel() {
 
   return (
     <div>
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-5">
         {[
           { label: 'Sent', value: sent, color: '#2ecc71' },
@@ -52,7 +51,6 @@ export default function FollowUpLogsPanel() {
         ))}
       </div>
 
-      {/* Log rows */}
       <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
         {logs.map(log => (
           <div key={log.id} className="rounded-xl p-4" style={{
@@ -76,8 +74,8 @@ export default function FollowUpLogsPanel() {
                 </div>
                 <p className="text-xs mt-0.5 truncate" style={{ color: '#9ea7b5' }}>
                   {log.sequence_name && <span>Seq: <strong>{log.sequence_name}</strong> · </span>}
-                  {log.channel === 'email' && log.lead_email && <span>{log.lead_email}</span>}
-                  {log.channel === 'sms' && log.lead_phone && <span>{log.lead_phone}</span>}
+                  {log.channel === 'email' && log.lead_email}
+                  {log.channel === 'sms' && log.lead_phone}
                 </p>
                 {log.subject && <p className="text-xs mt-0.5 truncate" style={{ color: '#f8d417' }}>📧 {log.subject}</p>}
                 {log.error && <p className="text-xs mt-0.5" style={{ color: '#f66c25' }}>⚠ {log.error}</p>}
