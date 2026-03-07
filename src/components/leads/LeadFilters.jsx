@@ -43,7 +43,37 @@ export default function LeadFilters({ filters, onChange, categories, tags, total
   });
 
   return (
-    <div className="rounded-xl mb-4" style={{ background: 'rgba(10,25,41,0.8)', border: '2px solid #4acbbf' }}>
+    <>
+    {/* Mobile: single button opens bottom drawer */}
+    <div className="sm:hidden mb-4">
+      <button
+        onClick={() => setDrawerOpen(true)}
+        className="w-full flex items-center justify-between px-4 py-3 rounded-xl"
+        style={{ background: 'rgba(10,25,41,0.8)', border: '2px solid #4acbbf' }}
+      >
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4" style={{ color: '#4acbbf' }} />
+          <span className="font-semibold text-sm" style={{ color: '#f8d417' }}>Filters & Sort</span>
+          {activeCount > 0 && (
+            <Badge className="text-xs px-2 py-0.5" style={{ background: '#f66c25', color: '#fff', borderRadius: '999px' }}>
+              {activeCount}
+            </Badge>
+          )}
+        </div>
+        <span className="text-xs" style={{ color: '#9ea7b5' }}>{filteredCount} / {totalCount}</span>
+      </button>
+      <FilterDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        filters={filters}
+        onChange={onChange}
+        categories={categories}
+        tags={tags}
+      />
+    </div>
+
+    {/* Desktop: existing inline filters */}
+    <div className="hidden sm:block rounded-xl mb-4" style={{ background: 'rgba(10,25,41,0.8)', border: '2px solid #4acbbf' }}>
       {/* Header bar */}
       <div
         className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
