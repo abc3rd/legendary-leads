@@ -17,6 +17,7 @@ const SORT_OPTIONS = [
 
 export default function LeadFilters({ filters, onChange, categories, tags, totalCount, filteredCount }) {
   const [expanded, setExpanded] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const set = (key, value) => onChange({ ...filters, [key]: value });
 
