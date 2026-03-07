@@ -206,6 +206,17 @@ export default function Dashboard() {
           </Button>
         </div>
 
+        {/* Setup Checklist - shown until dismissed or completed */}
+        {!onboarding.completed && onboarding.tourSeen && (
+          <SetupChecklist
+            checklist={onboarding.checklist}
+            completedCount={completedCount}
+            totalCount={totalCount}
+            onMarkChecked={markChecked}
+            onDismiss={dismissChecklist}
+          />
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6 relative">
           {/* Mobile History Sidebar */}
           {showHistory && (
