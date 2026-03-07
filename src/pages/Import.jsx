@@ -80,6 +80,7 @@ export default function Import() {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(null);
   const [stats, setStats] = useState(null);
+  const { markChecked } = useOnboarding();
 
   React.useEffect(() => {
     base44.auth.me().catch(() => toast.error('Please log in to import leads'));
