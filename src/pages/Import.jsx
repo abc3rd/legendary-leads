@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useOnboarding } from '@/components/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
 import { Upload, CheckCircle2, AlertCircle, ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
