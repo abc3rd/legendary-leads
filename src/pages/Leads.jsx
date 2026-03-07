@@ -10,6 +10,7 @@ import AILeadAssistant from '../components/leads/AILeadAssistant';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { useOnboarding } from '@/components/hooks/useOnboarding';
 
 const DEFAULT_FILTERS = {
   category: '',
