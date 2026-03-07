@@ -16,6 +16,7 @@ import { useOnboarding } from '@/components/hooks/useOnboarding';
 
 export default function Dashboard() {
   const { authState, user, signIn } = useAuthStatus();
+  const { state: onboarding, markTourSeen, markChecked, dismiss: dismissChecklist, completedCount, totalCount } = useOnboarding();
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [textInput, setTextInput] = useState('');
