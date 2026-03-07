@@ -17,14 +17,10 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
   const insertVar = (v) => set('body', form.body + v);
 
   const save = async () => {
-    if (!form.name.trim() || !form.body.trim()) {
-      toast.error('Name and body are required');
-      return;
-    }
+    if (!form.name.trim() || !form.body.trim()) { toast.error('Name and body are required'); return; }
     setSaving(true);
     if (template?.id) {
       await base44.entities.FollowUpTemplate.update(template.id, form);
@@ -38,10 +34,8 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
       <div className="w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden" style={{
-        background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
-        border: '2px solid #4acbbf'
+        background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)', border: '2px solid #4acbbf'
       }}>
-        {/* Header */}
         <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(74,203,191,0.3)' }}>
           <h2 className="text-lg font-bold" style={{ color: '#f8d417', fontFamily: 'Poppins, sans-serif' }}>
             {template ? 'Edit Template' : 'New Template'}
@@ -50,14 +44,12 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
         </div>
 
         <div className="p-5 space-y-4 overflow-y-auto" style={{ maxHeight: '70vh' }}>
-          {/* Name */}
           <div>
             <label className="text-xs font-semibold mb-1 block" style={{ color: '#9ea7b5' }}>Template Name</label>
             <Input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g., Cold Outreach Email"
               style={{ background: '#071a2c', borderColor: '#4acbbf', color: '#fff' }} />
           </div>
 
-          {/* Channel */}
           <div>
             <label className="text-xs font-semibold mb-2 block" style={{ color: '#9ea7b5' }}>Channel</label>
             <div className="grid grid-cols-2 gap-2">
@@ -76,7 +68,6 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* Subject (email only) */}
           {form.channel === 'email' && (
             <div>
               <label className="text-xs font-semibold mb-1 block" style={{ color: '#9ea7b5' }}>Subject Line</label>
@@ -85,7 +76,6 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
             </div>
           )}
 
-          {/* Variables */}
           <div>
             <label className="text-xs font-semibold mb-2 block" style={{ color: '#9ea7b5' }}>Insert Variable</label>
             <div className="flex flex-wrap gap-1.5">
@@ -99,19 +89,14 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* Body */}
           <div>
             <label className="text-xs font-semibold mb-1 block" style={{ color: '#9ea7b5' }}>
-              Message Body {form.channel === 'sms' && <span style={{ color: '#f66c25' }}>(keep under 160 chars for single SMS)</span>}
+              Message Body {form.channel === 'sms' && <span style={{ color: '#f66c25' }}>(keep under 160 chars)</span>}
             </label>
-            <textarea
-              value={form.body}
-              onChange={e => set('body', e.target.value)}
-              rows={6}
+            <textarea value={form.body} onChange={e => set('body', e.target.value)} rows={6}
               placeholder="Hi {{name}}, I came across your profile and wanted to reach out..."
               className="w-full rounded-lg p-3 text-sm resize-none outline-none"
-              style={{ background: '#071a2c', border: '1px solid #4acbbf', color: '#fff' }}
-            />
+              style={{ background: '#071a2c', border: '1px solid #4acbbf', color: '#fff' }} />
             {form.channel === 'sms' && (
               <p className="text-xs mt-1" style={{ color: form.body.length > 160 ? '#f66c25' : '#9ea7b5' }}>
                 {form.body.length} / 160 characters
