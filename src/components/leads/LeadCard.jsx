@@ -22,7 +22,7 @@ export default function LeadCard({ lead, onEnriched }) {
 
   const handleStatusChange = async (newStatus) => {
     if (newStatus === localStatus || statusChanging) return;
-    setLocalStatus(newStatus); // optimistic
+    setLocalStatus(newStatus);
     setStatusChanging(true);
     await base44.entities.Lead.update(lead.id, { status: newStatus });
     setStatusChanging(false);
@@ -54,7 +54,6 @@ export default function LeadCard({ lead, onEnriched }) {
       onMouseLeave={e => e.currentTarget.style.borderColor = '#5e6a78'}
     >
       <CardContent className="p-5">
-        {/* Header */}
         <div className="flex items-start justify-between mb-3 gap-2">
           <div className="flex items-center gap-3 min-w-0">
             <div className="h-11 w-11 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-lg"
@@ -97,12 +96,10 @@ export default function LeadCard({ lead, onEnriched }) {
           </div>
         </div>
 
-        {/* Bio */}
         {lead.bio && (
           <p className="text-xs mb-3 line-clamp-2" style={{ color: '#9ea7b5' }}>{lead.bio}</p>
         )}
 
-        {/* Stats */}
         <div className="grid grid-cols-2 gap-2 mb-3 rounded-lg p-2" style={{ background: 'rgba(84,176,231,0.07)' }}>
           <div className="flex items-center gap-1.5 text-xs">
             <Users className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#54b0e7' }} />
@@ -120,7 +117,6 @@ export default function LeadCard({ lead, onEnriched }) {
           </div>
         </div>
 
-        {/* Contact */}
         <div className="space-y-1.5 border-t pt-3" style={{ borderColor: 'rgba(94,106,120,0.4)' }}>
           {lead.email && (
             <a href={`mailto:${lead.email}`} className="flex items-center gap-2 text-xs hover:opacity-80" style={{ color: '#4acbbf' }}>
@@ -151,12 +147,10 @@ export default function LeadCard({ lead, onEnriched }) {
           )}
         </div>
 
-        {/* AI Enrich */}
         <div className="mt-3 pt-2 border-t flex justify-end" style={{ borderColor: 'rgba(94,106,120,0.3)' }}>
           <EnrichLeadButton lead={lead} onEnriched={onEnriched} />
         </div>
 
-        {/* Tag */}
         {lead.tag && (
           <div className="mt-2 flex items-center gap-1.5">
             <Tag className="h-3 w-3" style={{ color: '#f66c25' }} />
