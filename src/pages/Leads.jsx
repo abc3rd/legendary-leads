@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';;
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Search, Download, Loader2 } from 'lucide-react';
+import PullToRefresh from '../components/ui/PullToRefresh';
 import LeadCard from '../components/leads/LeadCard';
 import LeadFilters from '../components/leads/LeadFilters';
 import AILeadAssistant from '../components/leads/AILeadAssistant';
@@ -32,10 +33,12 @@ export default function Leads() {
   // Mark "viewLeads" step as done when user lands here
   useEffect(() => { markChecked('viewLeads'); }, []);
 
-  const { data: leads = [], isLoading } = useQuery({
+  const { data: leads = [], isLoading, refetch } = useQuery({
     queryKey: ['leads'],
     queryFn: () => base44.entities.Lead.list('-created_date', 500),
   });
+
+  const handleRefresh = useCallback(async () => { await refetch(); }, [refetch]);
 
   // Derive unique categories and tags from data
   const categories = useMemo(() => {
@@ -138,6 +141,7 @@ export default function Leads() {
   };
 
   return (
+    <PullToRefresh onRefresh={handleRefresh} className="min-h-screen">
     <div className="min-h-screen p-4 sm:p-6" style={{ background: '#0a1929' }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -232,5 +236,6 @@ export default function Leads() {
         )}
       </div>
     </div>
+    </PullToRefresh>
   );
 }

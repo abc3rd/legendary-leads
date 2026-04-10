@@ -41,12 +41,18 @@ export default function Sequences() {
   };
 
   const deleteSequence = async (id) => {
+    // Optimistic delete
+    qc.setQueryData(['follow_up_sequences'], (old = []) => old.filter(s => s.id !== id));
     await base44.entities.FollowUpSequence.delete(id);
     qc.invalidateQueries({ queryKey: ['follow_up_sequences'] });
     toast.success('Sequence deleted');
   };
 
   const toggleSequence = async (seq) => {
+    // Optimistic toggle
+    qc.setQueryData(['follow_up_sequences'], (old = []) =>
+      old.map(s => s.id === seq.id ? { ...s, is_active: !s.is_active } : s)
+    );
     await base44.entities.FollowUpSequence.update(seq.id, { is_active: !seq.is_active });
     qc.invalidateQueries({ queryKey: ['follow_up_sequences'] });
   };

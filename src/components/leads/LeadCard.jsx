@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Phone, Globe, Users, User, MapPin, Tag } from 'lucide-react';
 import EnrichLeadButton from './EnrichLeadButton';
@@ -13,11 +14,25 @@ const STATUS_COLORS = {
   unresponsive: { bg: '#5e6a78', text: '#fff' },
 };
 
+const STATUSES = Object.keys(STATUS_COLORS);
+
 export default function LeadCard({ lead, onEnriched }) {
+  const [localStatus, setLocalStatus] = useState(lead.status);
+  const [statusChanging, setStatusChanging] = useState(false);
+
+  const handleStatusChange = async (newStatus) => {
+    if (newStatus === localStatus || statusChanging) return;
+    setLocalStatus(newStatus); // optimistic
+    setStatusChanging(true);
+    await base44.entities.Lead.update(lead.id, { status: newStatus });
+    setStatusChanging(false);
+    if (onEnriched) onEnriched();
+  };
+
   const getAreaCode = (phone) => {
     if (!phone) return null;
-    const match = phone.match(/\(?(\d{3})\)?/);
-    return match ? match[1] : null;
+    const digits = phone.replace(/\D/g, '');
+    return digits.length >= 10 ? digits.slice(0, 3) : null;
   };
 
   const formatNumber = (num) => {
@@ -28,7 +43,7 @@ export default function LeadCard({ lead, onEnriched }) {
   };
 
   const areaCode = getAreaCode(lead.phone);
-  const statusStyle = STATUS_COLORS[lead.status] || STATUS_COLORS.new;
+  const statusStyle = STATUS_COLORS[localStatus] || STATUS_COLORS.new;
   const initial = lead.name?.[0]?.toUpperCase() || lead.username?.[0]?.toUpperCase() || 'L';
 
   return (
@@ -56,11 +71,21 @@ export default function LeadCard({ lead, onEnriched }) {
             </div>
           </div>
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
-            {lead.status && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap"
-                style={{ background: statusStyle.bg, color: statusStyle.text }}>
-                {lead.status.replace(/_/g, ' ')}
-              </span>
+            {localStatus && (
+              <select
+                value={localStatus}
+                onChange={e => handleStatusChange(e.target.value)}
+                onClick={e => e.stopPropagation()}
+                disabled={statusChanging}
+                className="text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap cursor-pointer border-none outline-none"
+                style={{ background: statusStyle.bg, color: statusStyle.text, opacity: statusChanging ? 0.7 : 1 }}
+              >
+                {STATUSES.map(s => (
+                  <option key={s} value={s} style={{ background: '#1a2332', color: '#fff' }}>
+                    {s.replace(/_/g, ' ')}
+                  </option>
+                ))}
+              </select>
             )}
             {lead.category && (
               <span className="text-xs px-2 py-0.5 rounded-full" style={{

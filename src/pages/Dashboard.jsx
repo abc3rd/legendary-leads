@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, Download, Sparkles, Send, Loader2, Menu, X, LogIn } from 'lucide-react';
 import VoiceInput from '../components/voice/VoiceInput';
+import PullToRefresh from '../components/ui/PullToRefresh';
 import MessageBubble from '../components/chat/MessageBubble';
 import ChatHistory from '../components/chat/ChatHistory';
 import AnimatedHorse from '../components/ui/AnimatedHorse';
@@ -25,6 +26,13 @@ export default function Dashboard() {
   const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef(null);
   const initRef = useRef(false);
+
+  const handleRefresh = async () => {
+    if (conversation?.id) {
+      const conv = await base44.agents.getConversation(conversation.id);
+      setMessages(conv.messages || []);
+    }
+  };
 
   useEffect(() => {
     if (authState === 'signed_in' && !initRef.current) {
@@ -170,6 +178,7 @@ export default function Dashboard() {
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh} className="min-h-screen" style={{ background: '#0a1929' }}>
     <div className="min-h-screen" style={{ background: '#0a1929' }}>
       {/* Feature Tour - shown once to new users */}
       {!onboarding.tourSeen && authState === 'signed_in' && (
@@ -416,5 +425,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }

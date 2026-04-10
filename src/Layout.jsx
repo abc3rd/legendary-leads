@@ -1,25 +1,34 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Upload, Database, Zap, Settings, TrendingUp } from 'lucide-react';
+import { Sparkles, Upload, Database, Zap, Settings, BarChart2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BOTTOM_NAV = [
+
   { name: 'Dashboard', path: 'Dashboard', icon: Sparkles },
   { name: 'Leads', path: 'Leads', icon: Database },
   { name: 'Import', path: 'Import', icon: Upload },
   { name: 'Sequences', path: 'Sequences', icon: Zap },
-  { name: 'Analytics', path: 'Analytics', icon: TrendingUp },
+  { name: 'Analytics', path: 'Analytics', icon: BarChart2 },
   { name: 'Settings', path: 'Settings', icon: Settings },
 ];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (pageName) => currentPageName === pageName;
 
+  const handleNavClick = (e, path) => {
+    if (isActive(path)) {
+      e.preventDefault();
+      navigate(createPageUrl(path), { replace: true });
+    }
+  };
+
   return (
-    <div className="min-h-screen" style={{ background: '#0a1929' }}>
+    <div className="min-h-screen bg-background text-foreground" style={{ '--nav-bg': 'rgba(10,25,41,0.97)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600&display=swap');
 
@@ -86,7 +95,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Header */}
       <header className="safe-header border-b sticky top-0 z-40" style={{
         borderColor: 'rgba(74, 203, 191, 0.2)',
-        background: 'rgba(10, 25, 41, 0.97)',
+        background: 'var(--nav-bg)',
         backdropFilter: 'blur(12px)'
       }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
@@ -111,6 +120,7 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     key={item.path}
                     to={createPageUrl(item.path)}
+                    onClick={(e) => handleNavClick(e, item.path)}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm"
                     style={{
                       background: active ? '#54b0e7' : 'transparent',
@@ -144,7 +154,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Mobile Bottom Navigation Bar */}
       <nav className="bottom-nav-bar fixed bottom-0 left-0 right-0 z-50 md:hidden border-t" style={{
-        background: 'rgba(10, 25, 41, 0.97)',
+        background: 'var(--nav-bg)',
         backdropFilter: 'blur(12px)',
         borderColor: 'rgba(74, 203, 191, 0.25)'
       }}>
@@ -156,6 +166,7 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.path}
                 to={createPageUrl(item.path)}
+                onClick={(e) => handleNavClick(e, item.path)}
                 className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all min-w-0"
                 style={{ color: active ? '#4acbbf' : '#5e6a78' }}
               >
