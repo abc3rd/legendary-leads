@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles, Wand2, RefreshCw, Plus, X, ChevronDown, ChevronUp, Loader2, CheckCircle } from 'lucide-react';
@@ -129,14 +130,16 @@ export default function AILeadAssistant({ onLeadsCreated }) {
               className="flex-1 text-sm placeholder:text-gray-600"
               style={{ background: '#071a2c', borderColor: '#f8d417', color: '#fff' }}
             />
-            <select
-              value={count}
-              onChange={e => setCount(e.target.value)}
-              className="rounded-lg px-2 py-1.5 text-sm outline-none"
-              style={{ background: '#071a2c', color: '#fff', border: '1px solid rgba(248,212,23,0.4)' }}
-            >
-              {[3, 5, 10].map(n => <option key={n} value={n}>{n} leads</option>)}
-            </select>
+            <Select value={String(count)} onValueChange={v => setCount(Number(v))}>
+              <SelectTrigger className="w-24 text-sm" style={{ background: '#071a2c', color: '#fff', border: '1px solid rgba(248,212,23,0.4)' }}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent style={{ background: '#071a2c', border: '1px solid rgba(248,212,23,0.4)' }}>
+                {[3, 5, 10].map(n => (
+                  <SelectItem key={n} value={String(n)} style={{ color: '#fff' }}>{n} leads</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button
               onClick={run}
               disabled={loading || !criteria.trim()}

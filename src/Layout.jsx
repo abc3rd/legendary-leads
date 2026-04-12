@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Sparkles, Upload, Database, Zap, Settings, BarChart2 } from 'lucide-react';
@@ -17,14 +17,28 @@ const BOTTOM_NAV = [
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const scrollPositions = useRef({});
+
+  // Save scroll position before leaving a page
+  const saveScroll = () => {
+    scrollPositions.current[currentPageName] = window.scrollY;
+  };
+
+  // Restore scroll position when page changes
+  useEffect(() => {
+    const saved = scrollPositions.current[currentPageName];
+    window.scrollTo(0, saved || 0);
+  }, [currentPageName]);
 
   const isActive = (pageName) => currentPageName === pageName;
 
   const handleNavClick = (e, path) => {
-    if (isActive(path)) {
-      e.preventDefault();
-      navigate(createPageUrl(path), { replace: true });
-    }
+    saveScroll();
+  saveScroll();
+  if (isActive(path)) {
+    e.preventDefault();
+    navigate(createPageUrl(path), { replace: true });
+  }
   };
 
   return (
@@ -100,16 +114,27 @@ export default function Layout({ children, currentPageName }) {
       }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
-            <Link to={createPageUrl('Dashboard')} className="flex items-center gap-2 sm:gap-3">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/691ccbe8057765b3fc1fdb65/dd282f7ea_LL-Logo1024x1024.png"
-                alt="Legendary Leads"
-                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover"
-              />
-              <span className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#f8d417' }}>
-                Legendary Leads
-              </span>
-            </Link>
+            <div className="flex items-center gap-2">
+              {currentPageName !== 'Dashboard' && (
+                <button
+                  onClick={() => { saveScroll(); navigate(-1); }}
+                  className="flex items-center justify-center h-8 w-8 rounded-lg transition-all md:hidden"
+                  style={{ background: 'rgba(74,203,191,0.15)', color: '#4acbbf' }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+              )}
+              <Link to={createPageUrl('Dashboard')} className="flex items-center gap-2 sm:gap-3">
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/691ccbe8057765b3fc1fdb65/dd282f7ea_LL-Logo1024x1024.png"
+                  alt="Legendary Leads"
+                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover"
+                />
+                <span className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#f8d417' }}>
+                  Legendary Leads
+                </span>
+              </Link>
+            </div>
 
             {/* Desktop nav only */}
             <nav className="hidden md:flex items-center gap-2">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Phone, Globe, Users, User, MapPin, Tag } from 'lucide-react';
 import EnrichLeadButton from './EnrichLeadButton';
@@ -71,20 +72,22 @@ export default function LeadCard({ lead, onEnriched }) {
           </div>
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             {localStatus && (
-              <select
-                value={localStatus}
-                onChange={e => handleStatusChange(e.target.value)}
-                onClick={e => e.stopPropagation()}
-                disabled={statusChanging}
-                className="text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap cursor-pointer border-none outline-none"
-                style={{ background: statusStyle.bg, color: statusStyle.text, opacity: statusChanging ? 0.7 : 1 }}
-              >
-                {STATUSES.map(s => (
-                  <option key={s} value={s} style={{ background: '#1a2332', color: '#fff' }}>
-                    {s.replace(/_/g, ' ')}
-                  </option>
-                ))}
-              </select>
+              <Select value={localStatus} onValueChange={handleStatusChange} disabled={statusChanging}>
+                <SelectTrigger
+                  className="h-auto text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap border-none outline-none w-auto"
+                  style={{ background: statusStyle.bg, color: statusStyle.text, opacity: statusChanging ? 0.7 : 1 }}
+                  onClick={e => e.stopPropagation()}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent style={{ background: '#1a2332', border: '1px solid #4acbbf' }}>
+                  {STATUSES.map(s => (
+                    <SelectItem key={s} value={s} style={{ color: '#fff' }}>
+                      {s.replace(/_/g, ' ')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
             {lead.category && (
               <span className="text-xs px-2 py-0.5 rounded-full" style={{
