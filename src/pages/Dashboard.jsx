@@ -10,6 +10,7 @@ import ChatHistory from '../components/chat/ChatHistory';
 import AnimatedHorse from '../components/ui/AnimatedHorse';
 import FeatureTour from '../components/onboarding/FeatureTour';
 import SetupChecklist from '../components/onboarding/SetupChecklist';
+import LeadsDBQuery from '../components/leads/LeadsDBQuery';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useAuthStatus } from '@/components/hooks/useAuthStatus';
@@ -263,6 +264,9 @@ export default function Dashboard() {
           </div>
 
           <div className="lg:col-span-3 space-y-4 md:space-y-6">
+          {/* DB Query Panel */}
+          <LeadsDBQuery />
+
           {/* Chat Panel */}
           <div>
             <div className="rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden" style={{ 
