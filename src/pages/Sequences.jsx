@@ -3,19 +3,20 @@ import { useOnboarding } from '@/components/hooks/useOnboarding';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, Zap, Clock, Mail, MessageSquare, Loader2, ToggleLeft, ToggleRight, Trash2, BookTemplate, Activity } from 'lucide-react';
+import { ArrowLeft, Plus, Zap, Clock, Mail, MessageSquare, Loader2, ToggleLeft, ToggleRight, Trash2, BookTemplate, Activity, GitBranch } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateEditor from '../components/sequences/TemplateEditor';
 import SequenceEditor from '../components/sequences/SequenceEditor';
 import FollowUpLogsPanel from '../components/sequences/FollowUpLogsPanel';
+import FlowCanvas from '../components/sequences/FlowCanvas';
 import { toast } from 'sonner';
 
-const TABS = ['Templates', 'Sequences', 'Activity Log'];
+const TABS = ['Flow Chart', 'Templates', 'Sequences', 'Activity Log'];
 
 export default function Sequences() {
   const { markChecked } = useOnboarding();
-  const [activeTab, setActiveTab] = useState('Sequences');
+  const [activeTab, setActiveTab] = useState('Flow Chart');
 
   useEffect(() => { markChecked('createSequence'); }, []);
   const [editingTemplate, setEditingTemplate] = useState(null);
@@ -89,6 +90,7 @@ export default function Sequences() {
                 borderBottom: activeTab === tab ? '2px solid #4acbbf' : '2px solid transparent',
                 marginBottom: '-1px'
               }}>
+              {tab === 'Flow Chart' && <GitBranch className="h-4 w-4 inline mr-1.5" />}
               {tab === 'Templates' && <BookTemplate className="h-4 w-4 inline mr-1.5" />}
               {tab === 'Sequences' && <Zap className="h-4 w-4 inline mr-1.5" />}
               {tab === 'Activity Log' && <Activity className="h-4 w-4 inline mr-1.5" />}
@@ -96,6 +98,32 @@ export default function Sequences() {
             </button>
           ))}
         </div>
+
+        {/* Flow Chart Tab */}
+        {activeTab === 'Flow Chart' && (
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-sm" style={{ color: '#9ea7b5' }}>
+                Drag sequences between trigger columns to reassign them. Toggle active/inactive inline.
+              </p>
+              <Button onClick={openNewSequence} style={{ background: 'linear-gradient(135deg, #ea00ea 0%, #c3c3c3 100%)', color: '#fff' }}>
+                <Plus className="h-4 w-4 mr-1" /> New Sequence
+              </Button>
+            </div>
+            {sLoading ? (
+              <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin" style={{ color: '#ea00ea' }} /></div>
+            ) : (
+              <FlowCanvas
+                sequences={sequences}
+                templates={templates}
+                onToggle={toggleSequence}
+                onDelete={deleteSequence}
+                onAddSequence={(defaults) => { setEditingSequence(defaults); setShowSequenceEditor(true); }}
+                onReorder={() => qc.invalidateQueries({ queryKey: ['follow_up_sequences'] })}
+              />
+            )}
+          </div>
+        )}
 
         {/* Templates Tab */}
         {activeTab === 'Templates' && (
