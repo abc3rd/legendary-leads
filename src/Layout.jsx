@@ -42,7 +42,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{ '--nav-bg': 'rgba(10,25,41,0.97)' }}>
+    <div className="min-h-screen bg-background text-foreground" style={{ '--nav-bg': 'rgba(13,13,26,0.97)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600&display=swap');
 
@@ -59,27 +59,30 @@ export default function Layout({ children, currentPageName }) {
         }
 
         :root {
-          --omega-yellow: #f8d417;
-          --omega-teal: #4acbbf;
-          --omega-blue: #54b0e7;
-          --omega-orange: #f66c25;
-          --primary-navy: #0a1929;
-          --steel-light: #d7dde5;
-          --steel-dark: #5e6a78;
-          --background: #0a1929;
+          --omega-magenta: #ea00ea;
+          --omega-silver: #c3c3c3;
+          --omega-yellow: #f5d800;
+          --omega-teal: #00c2e0;
+          --omega-blue: #0057ff;
+          --omega-green: #00e676;
+          --omega-orange: #ea00ea;
+          --primary-navy: #0d0d1a;
+          --steel-light: #c3c3c3;
+          --steel-dark: #7a7a8c;
+          --background: #0d0d1a;
           --text-primary: #ffffff;
-          --text-muted: #9ea7b5;
+          --text-muted: #a0a0b8;
         }
 
         @media (prefers-color-scheme: dark) {
           :root {
-            --background: #0a1929;
+            --background: #0d0d1a;
             --text-primary: #ffffff;
           }
         }
         @media (prefers-color-scheme: light) {
           :root {
-            --background: #0a1929;
+            --background: #0d0d1a;
             --text-primary: #ffffff;
           }
         }
@@ -108,7 +111,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Header */}
       <header className="safe-header border-b sticky top-0 z-40" style={{
-        borderColor: 'rgba(74, 203, 191, 0.2)',
+        borderColor: 'rgba(234,0,234,0.3)',
         background: 'var(--nav-bg)',
         backdropFilter: 'blur(12px)'
       }}>
@@ -119,7 +122,7 @@ export default function Layout({ children, currentPageName }) {
                 <button
                   onClick={() => { saveScroll(); navigate(-1); }}
                   className="flex items-center justify-center h-8 w-8 rounded-lg transition-all md:hidden"
-                  style={{ background: 'rgba(74,203,191,0.15)', color: '#4acbbf' }}
+                  style={{ background: 'rgba(234,0,234,0.15)', color: '#ea00ea' }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
@@ -130,7 +133,7 @@ export default function Layout({ children, currentPageName }) {
                   alt="Legendary Leads"
                   className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover"
                 />
-                <span className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#f8d417' }}>
+                <span className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#ea00ea' }}>
                   Legendary Leads
                 </span>
               </Link>
@@ -148,8 +151,8 @@ export default function Layout({ children, currentPageName }) {
                     onClick={(e) => handleNavClick(e, item.path)}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm"
                     style={{
-                      background: active ? '#54b0e7' : 'transparent',
-                      color: active ? '#0a1929' : '#9ea7b5',
+                      background: active ? '#ea00ea' : 'transparent',
+                      color: active ? '#ffffff' : '#c3c3c3',
                       fontWeight: active ? 600 : 500
                     }}
                   >
@@ -181,7 +184,7 @@ export default function Layout({ children, currentPageName }) {
       <nav className="bottom-nav-bar fixed bottom-0 left-0 right-0 z-50 md:hidden border-t" style={{
         background: 'var(--nav-bg)',
         backdropFilter: 'blur(12px)',
-        borderColor: 'rgba(74, 203, 191, 0.25)'
+        borderColor: 'rgba(234,0,234,0.3)'
       }}>
         <div className="flex items-center justify-around px-2 pt-2 pb-1">
           {BOTTOM_NAV.map((item) => {
@@ -193,10 +196,10 @@ export default function Layout({ children, currentPageName }) {
                 to={createPageUrl(item.path)}
                 onClick={(e) => handleNavClick(e, item.path)}
                 className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all min-w-0"
-                style={{ color: active ? '#4acbbf' : '#5e6a78' }}
+                style={{ color: active ? '#ea00ea' : '#7a7a8c' }}
               >
                 <div className="rounded-lg p-1.5 transition-all" style={{
-                  background: active ? 'rgba(74,203,191,0.15)' : 'transparent'
+                  background: active ? 'rgba(234,0,234,0.15)' : 'transparent'
                 }}>
                   <Icon className="h-5 w-5" />
                 </div>
