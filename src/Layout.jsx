@@ -129,9 +129,10 @@ export default function Layout({ children, currentPageName }) {
               )}
               <Link to={createPageUrl('Dashboard')} className="flex items-center gap-2 sm:gap-3">
                 <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/691ccbe8057765b3fc1fdb65/dd282f7ea_LL-Logo1024x1024.png"
+                  src="https://media.base44.com/images/public/691ccbe8057765b3fc1fdb65/c30aff37b_Gemini_Generated_Image_kupphwkupphwkupp1.png"
                   alt="Legendary Leads"
-                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover"
+                  className="h-8 w-8 sm:h-10 sm:w-10 object-contain"
+                  style={{ filter: 'drop-shadow(0 0 6px #ea00ea88)' }}
                 />
                 <span className="text-lg sm:text-2xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#ea00ea' }}>
                   Legendary Leads
