@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Phone, Globe, Users, User, MapPin, Tag } from 'lucide-react';
 import EnrichLeadButton from './EnrichLeadButton';
+import SentimentGauge from './SentimentGauge';
 
 const STATUS_COLORS = {
   new: { bg: '#4acbbf', text: '#0a1929' },
@@ -149,6 +150,8 @@ export default function LeadCard({ lead, onEnriched }) {
             </a>
           )}
         </div>
+
+        <SentimentGauge lead={lead} onUpdated={onEnriched} />
 
         <div className="mt-3 pt-2 border-t flex justify-end" style={{ borderColor: 'rgba(94,106,120,0.3)' }}>
           <EnrichLeadButton lead={lead} onEnriched={onEnriched} />

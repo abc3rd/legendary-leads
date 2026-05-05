@@ -29,6 +29,7 @@ export default function LeadFilters({ filters, onChange, categories, tags, total
     filters.hasPhone,
     filters.minFollowers,
     filters.maxFollowers,
+    filters.sentiment,
   ].filter(Boolean).length;
 
   const reset = () => onChange({
@@ -39,6 +40,7 @@ export default function LeadFilters({ filters, onChange, categories, tags, total
     hasPhone: false,
     minFollowers: '',
     maxFollowers: '',
+    sentiment: '',
     sortBy: 'created_date_desc',
   });
 
@@ -211,6 +213,35 @@ export default function LeadFilters({ filters, onChange, categories, tags, total
               >
                 📞 Has Phone
               </button>
+
+              {/* Sentiment quick-filters */}
+              <div className="w-full mt-1 flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold" style={{ color: '#9ea7b5' }}>Sentiment:</span>
+                {[
+                  { value: 'Positive', emoji: '😊', color: '#2ecc71', bg: 'rgba(46,204,113,0.12)' },
+                  { value: 'Neutral',  emoji: '😐', color: '#f8d417', bg: 'rgba(248,212,23,0.12)' },
+                  { value: 'Negative', emoji: '😟', color: '#f66c25', bg: 'rgba(246,108,37,0.12)' },
+                ].map(s => (
+                  <button
+                    key={s.value}
+                    onClick={() => set('sentiment', filters.sentiment === s.value ? '' : s.value)}
+                    className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                    style={{
+                      background: filters.sentiment === s.value ? s.bg : 'rgba(255,255,255,0.04)',
+                      color: filters.sentiment === s.value ? s.color : '#7a8a9a',
+                      border: `1px solid ${filters.sentiment === s.value ? s.color : '#2a3a4a'}`,
+                    }}
+                  >
+                    {s.emoji} {s.value}
+                  </button>
+                ))}
+                {filters.sentiment === 'Positive' && (
+                  <span className="text-xs px-2 py-1 rounded-full font-semibold animate-pulse"
+                    style={{ background: 'rgba(46,204,113,0.2)', color: '#2ecc71', border: '1px solid rgba(46,204,113,0.4)' }}>
+                    🎯 Conversion targets
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         )}

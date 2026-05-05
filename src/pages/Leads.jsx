@@ -22,6 +22,7 @@ const DEFAULT_FILTERS = {
   hasPhone: false,
   minFollowers: '',
   maxFollowers: '',
+  sentiment: '',
   sortBy: 'created_date_desc',
 };
 
@@ -88,6 +89,9 @@ export default function Leads() {
 
       // Max followers
       if (filters.maxFollowers !== '' && (lead.followerCount ?? 0) > Number(filters.maxFollowers)) return false;
+
+      // Sentiment
+      if (filters.sentiment && lead.sentiment !== filters.sentiment) return false;
 
       return true;
     });

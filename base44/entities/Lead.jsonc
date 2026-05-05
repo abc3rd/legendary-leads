@@ -1,0 +1,132 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "description": "Instagram username"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name from profile"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Instagram bio text"
+    },
+    "category": {
+      "type": "string",
+      "description": "Profile category or niche"
+    },
+    "followerCount": {
+      "type": "number",
+      "description": "Number of followers"
+    },
+    "followingCount": {
+      "type": "number",
+      "description": "Number of accounts following"
+    },
+    "website": {
+      "type": "string",
+      "description": "Website URL from profile"
+    },
+    "email": {
+      "type": "string",
+      "description": "Contact email address"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number with area code"
+    },
+    "tag": {
+      "type": "string",
+      "description": "Custom tag for categorizing leads"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "cold_outreach",
+        "contacted",
+        "qualified",
+        "in_negotiation",
+        "converted",
+        "unresponsive"
+      ],
+      "default": "new",
+      "description": "Current workflow/pipeline status"
+    },
+    "sentiment": {
+      "type": "string",
+      "enum": [
+        "Positive",
+        "Neutral",
+        "Negative"
+      ],
+      "description": "AI-analyzed sentiment from conversation logs"
+    },
+    "sentiment_score": {
+      "type": "number",
+      "description": "Sentiment score 0\u2013100 (0=very negative, 50=neutral, 100=very positive)"
+    },
+    "sentiment_summary": {
+      "type": "string",
+      "description": "AI-generated summary of why this sentiment was assigned"
+    },
+    "sentiment_analyzed_at": {
+      "type": "string",
+      "description": "ISO timestamp of last sentiment analysis"
+    }
+  },
+  "required": [],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
