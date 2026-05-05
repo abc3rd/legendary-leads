@@ -8,6 +8,7 @@ import PullToRefresh from '../components/ui/PullToRefresh';
 import LeadCard from '../components/leads/LeadCard';
 import LeadFilters from '../components/leads/LeadFilters';
 import AILeadAssistant from '../components/leads/AILeadAssistant';
+import LeadDiscovery from '../components/leads/LeadDiscovery';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -187,6 +188,14 @@ export default function Leads() {
             />
           </div>
         </div>
+
+        {/* AI Lead Discovery */}
+        <LeadDiscovery
+          onLeadsCreated={() => {
+            queryClient.invalidateQueries({ queryKey: ['leads'] });
+            markChecked('useAI');
+          }}
+        />
 
         {/* AI Lead Assistant */}
         <AILeadAssistant
