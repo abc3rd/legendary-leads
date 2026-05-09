@@ -57,6 +57,9 @@ import Analytics from './pages/Analytics';
 import MapView from './pages/MapView';
 import TaskBoard from './pages/TaskBoard';
 import VoiceOutreach from './pages/VoiceOutreach';
+import Messaging from './pages/Messaging.jsx';
+import SocialScraper from './pages/SocialScraper.jsx';
+import RoundRobin from './pages/RoundRobin.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +74,9 @@ export const PAGES = {
     "MapView": MapView,
     "TaskBoard": TaskBoard,
     "VoiceOutreach": VoiceOutreach,
+    "Messaging": Messaging,
+    "SocialScraper": SocialScraper,
+    "RoundRobin": RoundRobin,
 }
 
 export const pagesConfig = {

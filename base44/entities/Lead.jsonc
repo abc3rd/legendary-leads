@@ -56,6 +56,18 @@
       "default": "new",
       "description": "Current workflow/pipeline status"
     },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of assigned team member"
+    },
+    "assigned_name": {
+      "type": "string",
+      "description": "Name of assigned team member"
+    },
+    "platform_source": {
+      "type": "string",
+      "description": "Social platform this lead was sourced from"
+    },
     "sentiment": {
       "type": "string",
       "enum": [

@@ -1,0 +1,88 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "sender_email": {
+      "type": "string",
+      "description": "Email of the sender"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Full name of the sender"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "Email of the recipient"
+    },
+    "recipient_name": {
+      "type": "string",
+      "description": "Full name of the recipient"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Message subject"
+    },
+    "body": {
+      "type": "string",
+      "description": "Message body"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the message has been read"
+    },
+    "thread_id": {
+      "type": "string",
+      "description": "Thread grouping ID"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "Parent message ID for replies"
+    }
+  },
+  "required": [
+    "recipient_email",
+    "body"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "sender_email": "{{user.email}}"
+        },
+        {
+          "recipient_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "recipient_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "sender_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

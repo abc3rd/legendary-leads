@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mail, Phone, Globe, Users, User, MapPin, Tag } from 'lucide-react';
+import { Mail, Phone, Globe, Users, User, MapPin, Tag, RefreshCw, UserCheck } from 'lucide-react';
 import EnrichLeadButton from './EnrichLeadButton';
 import SentimentGauge from './SentimentGauge';
 import LeadScoreBadge from './LeadScoreBadge';
 import ChurnRiskBadge from './ChurnRiskBadge';
+import BookMeetingButton from './BookMeetingButton';
 
 const STATUS_COLORS = {
   new: { bg: '#4acbbf', text: '#0a1929' },
@@ -106,6 +107,13 @@ export default function LeadCard({ lead, onEnriched }) {
           <p className="text-xs mb-3 line-clamp-2" style={{ color: '#9ea7b5' }}>{lead.bio}</p>
         )}
 
+        {lead.assigned_to && (
+          <div className="flex items-center gap-1.5 text-xs mb-2 px-2 py-1 rounded-lg" style={{ background: 'rgba(234,0,234,0.08)', border: '1px solid rgba(234,0,234,0.2)' }}>
+            <UserCheck className="h-3 w-3 flex-shrink-0" style={{ color: '#ea00ea' }} />
+            <span style={{ color: '#ea00ea' }}>Assigned to {lead.assigned_name || lead.assigned_to}</span>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-2 mb-3 rounded-lg p-2" style={{ background: 'rgba(84,176,231,0.07)' }}>
           <div className="flex items-center gap-1.5 text-xs">
             <Users className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#54b0e7' }} />
@@ -157,8 +165,22 @@ export default function LeadCard({ lead, onEnriched }) {
         <LeadScoreBadge lead={lead} onUpdated={onEnriched} />
         <ChurnRiskBadge lead={lead} onUpdated={onEnriched} />
 
-        <div className="mt-3 pt-2 border-t flex justify-end" style={{ borderColor: 'rgba(94,106,120,0.3)' }}>
-          <EnrichLeadButton lead={lead} onEnriched={onEnriched} />
+        <div className="mt-3 pt-2 border-t flex justify-between items-center gap-2 flex-wrap" style={{ borderColor: 'rgba(94,106,120,0.3)' }}>
+          <BookMeetingButton lead={lead} />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={async () => {
+                await base44.functions.invoke('refreshLeadProfile', { lead_id: lead.id });
+                if (onEnriched) onEnriched();
+              }}
+              className="p-1.5 rounded-lg transition-all"
+              title="Refresh profile & grade from social data"
+              style={{ background: 'rgba(0,194,224,0.12)', color: '#00c2e0', border: '1px solid rgba(0,194,224,0.25)' }}
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+            </button>
+            <EnrichLeadButton lead={lead} onEnriched={onEnriched} />
+          </div>
         </div>
 
         {lead.tag && (

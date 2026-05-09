@@ -193,6 +193,16 @@ export default function Leads() {
           </div>
         </div>
 
+        {/* Social Scraper shortcut */}
+        <div className="mb-4 flex justify-end">
+          <Link to={createPageUrl('SocialScraper')}>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+              style={{ background: 'linear-gradient(135deg, #ea00ea, #00c2e0)', color: '#fff' }}>
+              🌐 Social Scraper
+            </button>
+          </Link>
+        </div>
+
         {/* AI Lead Discovery */}
         <LeadDiscovery
           onLeadsCreated={() => {

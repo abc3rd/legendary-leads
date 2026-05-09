@@ -1,0 +1,38 @@
+{
+  "name": "LeadAssignment",
+  "type": "object",
+  "properties": {
+    "assignee_email": {
+      "type": "string",
+      "description": "Email of the assigned team member"
+    },
+    "assignee_name": {
+      "type": "string",
+      "description": "Full name of the assigned team member"
+    },
+    "category_expertise": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Categories this team member specializes in"
+    },
+    "active_lead_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Current number of active leads assigned"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this member is available for assignment"
+    },
+    "last_assigned_at": {
+      "type": "string",
+      "description": "ISO timestamp of last assignment"
+    }
+  },
+  "required": [
+    "assignee_email"
+  ]
+}
