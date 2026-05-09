@@ -156,3 +156,16 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* ── Mobile: minimum font size for readability ── */
+@media (max-width: 767px) {
+  p, span, li, div, label, input, textarea, select {
+    font-size: max(14px, 1em);
+  }
+}
+
+/* ── No text selection on interactive UI elements ── */
+button, [role="tab"], [role="button"], svg, .tab-item {
+  user-select: none;
+  -webkit-user-select: none;
+}

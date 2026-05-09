@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Upload, Database, Zap, Settings, BarChart2, Map,
   CheckSquare, Mic, MessageSquare, Globe, Users, Webhook,
-  GitBranch, BookOpen, ChevronDown, Menu, X, Home, Search
+  GitBranch, BookOpen, ChevronDown, Menu, X, Home, Search, ArrowLeft
 } from 'lucide-react';
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
@@ -287,10 +287,23 @@ function MobileMenu({ currentPageName, onClose }) {
 // ─── Main Layout ──────────────────────────────────────────────────────────────
 export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const scrollPositions = useRef({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const saveScroll = () => { scrollPositions.current[currentPageName] = window.scrollY; };
+  // Determine if we're on a "child" page (not Dashboard/Home)
+  const rootPages = ['Dashboard', 'Home'];
+  const isChildPage = !rootPages.includes(currentPageName) && location.pathname !== '/';
+
+  // Save scroll position before navigating away
+  const saveScroll = useCallback(() => {
+    scrollPositions.current[currentPageName] = window.scrollY;
+  }, [currentPageName]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', saveScroll, { passive: true });
+    return () => window.removeEventListener('scroll', saveScroll);
+  }, [saveScroll]);
 
   useEffect(() => {
     const saved = scrollPositions.current[currentPageName];
@@ -315,20 +328,38 @@ export default function Layout({ children, currentPageName }) {
         style={{ background: 'rgba(8,14,24,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(234,0,234,0.15)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
-            {/* Logo */}
-            <Link to={createPageUrl('Dashboard')} className="flex items-center gap-2.5 flex-shrink-0">
-              <motion.img
-                src="https://media.base44.com/images/public/691ccbe8057765b3fc1fdb65/c30aff37b_Gemini_Generated_Image_kupphwkupphwkupp1.png"
-                alt="Legendary Leads"
-                className="h-8 w-8 object-contain"
-                style={{ filter: 'drop-shadow(0 0 8px #ea00ea88)' }}
-                whileHover={{ scale: 1.08 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              />
-              <span className="text-lg font-bold hidden sm:block" style={{ fontFamily: 'Poppins, sans-serif', color: '#ea00ea' }}>
-                Legendary Leads
-              </span>
-            </Link>
+            {/* Logo / Back button */}
+            <div className="flex items-center gap-2.5 flex-shrink-0">
+              {/* Mobile: show back button on child pages */}
+              {isChildPage && (
+                <button
+                  onClick={() => navigate(-1)}
+                  className="md:hidden flex items-center justify-center h-8 w-8 rounded-xl transition-all"
+                  style={{ background: 'rgba(234,0,234,0.12)', color: '#ea00ea' }}
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+              )}
+              <Link to={createPageUrl('Dashboard')} className={`flex items-center gap-2.5 ${isChildPage ? 'hidden md:flex' : 'flex'}`}>
+                <motion.img
+                  src="https://media.base44.com/images/public/691ccbe8057765b3fc1fdb65/c30aff37b_Gemini_Generated_Image_kupphwkupphwkupp1.png"
+                  alt="Legendary Leads"
+                  className="h-8 w-8 object-contain"
+                  style={{ filter: 'drop-shadow(0 0 8px #ea00ea88)' }}
+                  whileHover={{ scale: 1.08 }}
+                  transition={{ type: 'spring', stiffness: 400 }}
+                />
+                <span className="text-lg font-bold hidden sm:block" style={{ fontFamily: 'Poppins, sans-serif', color: '#ea00ea' }}>
+                  Legendary Leads
+                </span>
+              </Link>
+              {/* On child pages mobile: show page title next to back button */}
+              {isChildPage && (
+                <span className="md:hidden text-sm font-bold truncate max-w-[140px]" style={{ color: '#ea00ea', fontFamily: 'Poppins, sans-serif' }}>
+                  {currentPageName.replace(/([A-Z])/g, ' $1').trim()}
+                </span>
+              )}
+            </div>
 
             {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-0.5">
