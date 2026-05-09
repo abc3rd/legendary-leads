@@ -64,6 +64,7 @@ import Webhooks from './pages/Webhooks.jsx';
 import WorkflowEngine from './pages/WorkflowEngine';
 import TeamDashboard from './pages/TeamDashboard';
 import Templates from './pages/Templates.jsx';
+import LegenDatabase from './pages/LegenDatabase.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +86,7 @@ export const PAGES = {
     "WorkflowEngine": WorkflowEngine,
     "TeamDashboard": TeamDashboard,
     "Templates": Templates,
+    "LegenDatabase": LegenDatabase,
 }
 
 export const pagesConfig = {

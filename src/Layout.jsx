@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Upload, Database, Zap, Settings, BarChart2, Map,
   CheckSquare, Mic, MessageSquare, Globe, Users, Webhook,
-  GitBranch, BookOpen, ChevronDown, Menu, X, Home
+  GitBranch, BookOpen, ChevronDown, Menu, X, Home, Search
 } from 'lucide-react';
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
@@ -50,6 +50,13 @@ const NAV_GROUPS = [
     ],
   },
   {
+    label: 'LegenDB',
+    icon: Database,
+    single: true,
+    path: 'LegenDatabase',
+    color: '#ea00ea',
+  },
+  {
     label: 'Insights',
     icon: BarChart2,
     color: '#54b0e7',
@@ -71,8 +78,8 @@ const NAV_GROUPS = [
 const MOBILE_NAV = [
   { name: 'Home', path: 'Dashboard', icon: Sparkles },
   { name: 'Leads', path: 'Leads', icon: Database },
+  { name: 'LegenDB', path: 'LegenDatabase', icon: Search },
   { name: 'Outreach', path: 'Sequences', icon: Zap },
-  { name: 'Team', path: 'TeamDashboard', icon: Users },
   { name: 'Analytics', path: 'Analytics', icon: BarChart2 },
 ];
 
