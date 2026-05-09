@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Upload, Database, Zap, Settings, BarChart2, Map, CheckSquare, Mic, MessageSquare, Globe, Users } from 'lucide-react';
+import { Sparkles, Upload, Database, Zap, Settings, BarChart2, Map, CheckSquare, Mic, MessageSquare, Globe, Users, Webhook } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BOTTOM_NAV = [
@@ -16,6 +16,7 @@ const BOTTOM_NAV = [
   { name: 'Messages', path: 'Messaging', icon: MessageSquare },
   { name: 'Scraper', path: 'SocialScraper', icon: Globe },
   { name: 'Assign', path: 'RoundRobin', icon: Users },
+  { name: 'Webhooks', path: 'Webhooks', icon: Webhook },
   { name: 'Settings', path: 'Settings', icon: Settings },
 ];
 

@@ -60,6 +60,7 @@ import VoiceOutreach from './pages/VoiceOutreach';
 import Messaging from './pages/Messaging.jsx';
 import SocialScraper from './pages/SocialScraper.jsx';
 import RoundRobin from './pages/RoundRobin.jsx';
+import Webhooks from './pages/Webhooks.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "Messaging": Messaging,
     "SocialScraper": SocialScraper,
     "RoundRobin": RoundRobin,
+    "Webhooks": Webhooks,
 }
 
 export const pagesConfig = {

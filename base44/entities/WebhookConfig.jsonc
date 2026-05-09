@@ -1,0 +1,49 @@
+{
+  "name": "WebhookConfig",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Friendly name for the webhook"
+    },
+    "url": {
+      "type": "string",
+      "description": "Endpoint URL to POST events to"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of event IDs to subscribe to"
+    },
+    "secret": {
+      "type": "string",
+      "description": "HMAC signing secret for X-Webhook-Signature header"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this webhook is enabled"
+    },
+    "delivery_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total successful deliveries"
+    },
+    "failure_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total failed deliveries"
+    },
+    "last_triggered_at": {
+      "type": "string",
+      "description": "ISO timestamp of last trigger"
+    }
+  },
+  "required": [
+    "name",
+    "url",
+    "events"
+  ]
+}

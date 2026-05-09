@@ -4,13 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { Loader2, TrendingUp, Users, Eye, Clock, MousePointerClick, UserPlus, Filter, GitBranch, BarChart2 } from 'lucide-react';
+import { Loader2, TrendingUp, Users, Eye, Clock, MousePointerClick, UserPlus, Filter, GitBranch, BarChart2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import LeadFunnelChart from '../components/analytics/LeadFunnelChart';
 import SequencePerformance from '../components/analytics/SequencePerformance';
 import CategoryConversionChart from '../components/analytics/CategoryConversionChart';
 import SentimentTrendChart from '../components/analytics/SentimentTrendChart';
+import ExportPanel from '../components/analytics/ExportPanel';
 
 const DATE_RANGES = [
   { label: 'Last 7 days', value: '7daysAgo' },
@@ -58,6 +59,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 const TABS = [
   { id: 'leads', label: 'Lead Analytics', icon: GitBranch },
   { id: 'ga4', label: 'Web Analytics', icon: BarChart2 },
+  { id: 'export', label: 'Export', icon: Download },
 ];
 
 export default function Analytics() {
@@ -202,6 +204,56 @@ export default function Analytics() {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* ── Export Tab ── */}
+        {activeTab === 'export' && (
+          <div className="space-y-6">
+            <ExportPanel leads={leads} logs={logs} />
+            <div className="rounded-xl p-5" style={{ background: 'linear-gradient(135deg, #0a1929 0%, #13202e 100%)', border: '1.5px solid rgba(84,176,231,0.2)' }}>
+              <h2 className="text-sm font-bold mb-3" style={{ color: '#54b0e7' }}>System Logs Preview</h2>
+              {logsLoading ? (
+                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" style={{ color: '#54b0e7' }} /></div>
+              ) : logs.length === 0 ? (
+                <p className="text-sm text-center py-8" style={{ color: '#5e6a78' }}>No activity logs yet</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(84,176,231,0.15)' }}>
+                        {['Username', 'Sequence', 'Channel', 'Status', 'Date'].map(h => (
+                          <th key={h} className="text-left px-3 py-2 font-semibold" style={{ color: '#54b0e7' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {logs.slice(0, 20).map((log, i) => (
+                        <tr key={i} className="hover:bg-white/5" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                          <td className="px-3 py-2" style={{ color: '#d7dde5' }}>{log.lead_username || '—'}</td>
+                          <td className="px-3 py-2" style={{ color: '#9ea7b5' }}>{log.sequence_name || '—'}</td>
+                          <td className="px-3 py-2">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold"
+                              style={{ background: log.channel === 'email' ? 'rgba(84,176,231,0.15)' : 'rgba(74,203,191,0.15)', color: log.channel === 'email' ? '#54b0e7' : '#4acbbf' }}>
+                              {log.channel?.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2">
+                            <span style={{ color: log.status === 'sent' ? '#2ecc71' : log.status === 'failed' ? '#f66c25' : '#9ea7b5' }}>
+                              {log.status}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2" style={{ color: '#5e6a78' }}>
+                            {log.created_date ? new Date(log.created_date).toLocaleDateString() : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {logs.length > 20 && <p className="text-xs mt-2 text-center" style={{ color: '#5e6a78' }}>Showing 20 of {logs.length} — export CSV for full data</p>}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
