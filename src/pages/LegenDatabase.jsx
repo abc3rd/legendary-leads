@@ -6,8 +6,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Database, Send, Loader2, Sparkles, Search, Users, BookOpen,
   FileText, X, RefreshCw, ChevronDown, Filter, Download,
-  MessageSquare, Star, Mail, Phone, Globe, Tag, TrendingUp
+  MessageSquare, Star, Mail, Phone, Globe, Tag, TrendingUp, Activity
 } from 'lucide-react';
+import ActivityFeed from '../components/leads/ActivityFeed';
 import ReactMarkdown from 'react-markdown';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -249,7 +250,7 @@ export default function LegenDatabase() {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [tab, setTab] = useState('chat'); // 'chat' | 'search'
+  const [tab, setTab] = useState('chat'); // 'chat' | 'search' | 'activity'
   const messagesEndRef = useRef(null);
   const initRef = useRef(false);
 
@@ -365,6 +366,7 @@ export default function LegenDatabase() {
           {[
             { id: 'chat', label: 'GLYTCH AI Chat', icon: MessageSquare },
             { id: 'search', label: 'Smart Search', icon: Search },
+            { id: 'activity', label: 'Activity Feed', icon: Activity },
           ].map(t => {
             const Icon = t.icon;
             return (
@@ -437,6 +439,9 @@ export default function LegenDatabase() {
 
         {/* Smart Search Tab */}
         {tab === 'search' && <SmartSearchPanel />}
+
+        {/* Activity Feed Tab */}
+        {tab === 'activity' && <ActivityFeed />}
       </div>
     </div>
   );

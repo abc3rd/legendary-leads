@@ -21,7 +21,7 @@ const CARD = { background: 'linear-gradient(135deg, #0a1929 0%, #13202e 100%)', 
 
 function RuleModal({ rule, sequences, onClose, onSaved }) {
   const [form, setForm] = useState(rule || {
-    name: '', trigger_type: 'status_change', trigger_status_to: 'contacted',
+    name: '', description: '', trigger_type: 'status_change', trigger_status_to: 'contacted',
     trigger_status_from: '', trigger_score_above: 70, trigger_score_below: '',
     action_type: 'trigger_sequence', sequence_id: '', sequence_name: '',
     assign_to_email: '', assign_to_name: '', add_tag_value: '',
@@ -57,6 +57,13 @@ function RuleModal({ rule, sequences, onClose, onSaved }) {
             <label className="text-xs block mb-1" style={{ color: '#9ea7b5' }}>Rule Name</label>
             <Input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Nurture contacted leads"
               style={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }} />
+          </div>
+          <div>
+            <label className="text-xs block mb-1" style={{ color: '#9ea7b5' }}>Description <span style={{ color: '#5e6a78' }}>(optional)</span></label>
+            <textarea value={form.description || ''} onChange={e => set('description', e.target.value)}
+              placeholder="Describe what this rule does…" maxLength={1000} rows={2}
+              className="w-full rounded-lg px-3 py-2 text-sm resize-none focus:outline-none"
+              style={{ background: '#071a2c', border: '1px solid #2a3a4a', color: '#fff' }} />
           </div>
 
           <div className="rounded-xl p-4 space-y-3" style={{ background: 'rgba(248,212,23,0.05)', border: '1px solid rgba(248,212,23,0.2)' }}>
