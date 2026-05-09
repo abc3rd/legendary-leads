@@ -1,0 +1,124 @@
+{
+  "name": "FollowUpSequence",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Sequence display name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description of what this sequence does (up to 1000 characters)"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "status_change",
+        "time_based"
+      ],
+      "default": "status_change",
+      "description": "What triggers this sequence"
+    },
+    "trigger_status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "cold_outreach",
+        "contacted",
+        "qualified",
+        "in_negotiation",
+        "converted",
+        "unresponsive"
+      ],
+      "description": "For status_change: which status triggers this"
+    },
+    "delay_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Delay in days before sending (0 = immediate)"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "ID of the FollowUpTemplate to use"
+    },
+    "template_name": {
+      "type": "string",
+      "description": "Cached template name for display"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "filter_has_email": {
+      "type": "boolean",
+      "default": false,
+      "description": "Only send to leads with email"
+    },
+    "filter_has_phone": {
+      "type": "boolean",
+      "default": false,
+      "description": "Only send to leads with phone"
+    },
+    "filter_category": {
+      "type": "string",
+      "description": "Only send to leads in this category"
+    }
+  },
+  "required": [
+    "name",
+    "trigger_type",
+    "template_id"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

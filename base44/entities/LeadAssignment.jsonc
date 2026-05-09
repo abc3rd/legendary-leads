@@ -10,6 +10,10 @@
       "type": "string",
       "description": "Full name of the assigned team member"
     },
+    "description": {
+      "type": "string",
+      "description": "Optional notes about this assignee's role or focus area (up to 1000 characters)"
+    },
     "category_expertise": {
       "type": "array",
       "items": {

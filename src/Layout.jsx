@@ -404,6 +404,14 @@ export default function Layout({ children, currentPageName }) {
         </motion.main>
       </AnimatePresence>
 
+      {/* Footer links for SEO / navigation */}
+      <footer className="hidden md:flex items-center justify-center gap-6 py-4 text-xs border-t"
+        style={{ borderColor: 'rgba(234,0,234,0.1)', color: '#5e6a78' }}>
+        <Link to={createPageUrl('About')} className="hover:text-white transition-colors">About</Link>
+        <Link to={createPageUrl('Contact')} className="hover:text-white transition-colors">Contact</Link>
+        <span>© {new Date().getFullYear()} Legendary Leads</span>
+      </footer>
+
       {/* Mobile bottom tab bar */}
       <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-40 md:hidden"
         style={{ background: 'rgba(8,14,24,0.97)', backdropFilter: 'blur(16px)', borderTop: '1px solid rgba(234,0,234,0.15)' }}>

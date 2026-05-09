@@ -6,6 +6,10 @@
       "type": "string",
       "description": "Friendly name for the webhook"
     },
+    "description": {
+      "type": "string",
+      "description": "Optional description of what this webhook does (up to 1000 characters)"
+    },
     "url": {
       "type": "string",
       "description": "Endpoint URL to POST events to"
