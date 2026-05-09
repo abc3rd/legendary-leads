@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import LeadFunnelChart from '../components/analytics/LeadFunnelChart';
 import SequencePerformance from '../components/analytics/SequencePerformance';
+import CategoryConversionChart from '../components/analytics/CategoryConversionChart';
+import SentimentTrendChart from '../components/analytics/SentimentTrendChart';
 
 const DATE_RANGES = [
   { label: 'Last 7 days', value: '7daysAgo' },
@@ -188,6 +190,10 @@ export default function Analytics() {
             ) : (
               <>
                 <LeadFunnelChart leads={leads} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <CategoryConversionChart leads={leads} />
+                  <SentimentTrendChart leads={leads} />
+                </div>
                 <div className="pt-2">
                   <h2 className="text-base font-bold mb-4" style={{ color: '#c3c3c3', fontFamily: 'Poppins, sans-serif' }}>
                     Follow-Up Sequence Performance

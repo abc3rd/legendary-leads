@@ -10,6 +10,7 @@ import TemplateEditor from '../components/sequences/TemplateEditor';
 import SequenceEditor from '../components/sequences/SequenceEditor';
 import FollowUpLogsPanel from '../components/sequences/FollowUpLogsPanel';
 import FlowCanvas from '../components/sequences/FlowCanvas';
+import TemplateLibrary from '../components/sequences/TemplateLibrary';
 import { toast } from 'sonner';
 
 const TABS = ['Flow Chart', 'Templates', 'Sequences', 'Activity Log'];
@@ -128,6 +129,7 @@ export default function Sequences() {
         {/* Templates Tab */}
         {activeTab === 'Templates' && (
           <div>
+            <TemplateLibrary />
             <div className="flex justify-between items-center mb-4">
               <p className="text-sm" style={{ color: '#9ea7b5' }}>
                 Reusable message templates with dynamic variables like <code className="text-xs px-1 rounded" style={{ background: 'rgba(74,203,191,0.15)', color: '#4acbbf' }}>{'{{name}}'}</code>

@@ -99,6 +99,28 @@
     "lead_score_at": {
       "type": "string",
       "description": "ISO timestamp of last lead score calculation"
+    },
+    "churn_risk": {
+      "type": "string",
+      "enum": [
+        "none",
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "AI-assessed churn risk level"
+    },
+    "churn_reason": {
+      "type": "string",
+      "description": "Reason for churn risk assessment"
+    },
+    "churn_risk_at": {
+      "type": "string",
+      "description": "ISO timestamp of last churn risk check"
+    },
+    "days_since_contact": {
+      "type": "number",
+      "description": "Days elapsed since last follow-up contact"
     }
   },
   "required": [],
