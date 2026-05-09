@@ -1,0 +1,103 @@
+{
+  "name": "LeadNote",
+  "type": "object",
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "description": "ID of the lead this note is attached to"
+    },
+    "lead_name": {
+      "type": "string",
+      "description": "Cached lead name for activity feed"
+    },
+    "lead_username": {
+      "type": "string",
+      "description": "Cached lead username"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Email of the author"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Full name of the author"
+    },
+    "body": {
+      "type": "string",
+      "description": "Note content"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "activity_type": {
+      "type": "string",
+      "enum": [
+        "note",
+        "status_change",
+        "assignment",
+        "email_sent",
+        "sms_sent",
+        "score_update"
+      ],
+      "default": "note",
+      "description": "Type of activity for feed display"
+    },
+    "activity_meta": {
+      "type": "string",
+      "description": "JSON string with extra context for activity entries"
+    }
+  },
+  "required": [
+    "lead_id",
+    "body"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "admin",
+            "user"
+          ]
+        }
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
