@@ -49,12 +49,14 @@
  */
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
-import Import from './pages/Import';
+import Import from './pages/Import.jsx';
 import Leads from './pages/Leads';
 import Sequences from './pages/Sequences';
 import Settings from './pages/Settings';
 import Analytics from './pages/Analytics';
 import MapView from './pages/MapView';
+import TaskBoard from './pages/TaskBoard';
+import VoiceOutreach from './pages/VoiceOutreach';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +69,8 @@ export const PAGES = {
     "Settings": Settings,
     "Analytics": Analytics,
     "MapView": MapView,
+    "TaskBoard": TaskBoard,
+    "VoiceOutreach": VoiceOutreach,
 }
 
 export const pagesConfig = {

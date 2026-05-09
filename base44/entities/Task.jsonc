@@ -1,0 +1,79 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task details"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "Make Phone Call",
+        "Send Direct Message",
+        "Send Email",
+        "Schedule Meeting",
+        "Follow Up",
+        "Other"
+      ],
+      "default": "Follow Up"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Pending",
+        "In Progress",
+        "Completed",
+        "Cancelled"
+      ],
+      "default": "Pending"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Urgent"
+      ],
+      "default": "Medium"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of assigned team member"
+    },
+    "lead_id": {
+      "type": "string",
+      "description": "Related lead ID"
+    },
+    "lead_name": {
+      "type": "string",
+      "description": "Cached lead name for display"
+    },
+    "lead_username": {
+      "type": "string",
+      "description": "Cached lead username"
+    },
+    "due_date": {
+      "type": "string",
+      "description": "ISO date string for due date"
+    },
+    "completed_at": {
+      "type": "string",
+      "description": "ISO timestamp when completed"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Completion notes"
+    }
+  },
+  "required": [
+    "title",
+    "task_type",
+    "status"
+  ]
+}

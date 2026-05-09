@@ -1,13 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Upload, Database, Zap, Settings, BarChart2, Map } from 'lucide-react';
+import { Sparkles, Upload, Database, Zap, Settings, BarChart2, Map, CheckSquare, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BOTTOM_NAV = [
   { name: 'Dashboard', path: 'Dashboard', icon: Sparkles },
   { name: 'Leads', path: 'Leads', icon: Database },
   { name: 'Map', path: 'MapView', icon: Map },
+  { name: 'Tasks', path: 'TaskBoard', icon: CheckSquare },
+  { name: 'Voice', path: 'VoiceOutreach', icon: Mic },
   { name: 'Import', path: 'Import', icon: Upload },
   { name: 'Sequences', path: 'Sequences', icon: Zap },
   { name: 'Analytics', path: 'Analytics', icon: BarChart2 },
@@ -177,7 +179,7 @@ export default function Layout({ children, currentPageName }) {
         backdropFilter: 'blur(12px)',
         borderColor: 'rgba(234,0,234,0.3)'
       }}>
-        <div className="flex items-center justify-around px-1 pt-2 pb-1">
+        <div className="flex items-center justify-around px-1 pt-2 pb-1 overflow-x-auto">
           {BOTTOM_NAV.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -186,7 +188,7 @@ export default function Layout({ children, currentPageName }) {
                 key={item.path}
                 to={createPageUrl(item.path)}
                 onClick={(e) => handleNavClick(e, item.path)}
-                className="flex flex-col items-center gap-0.5 px-1 py-1 rounded-xl transition-all min-w-0"
+                className="flex flex-col items-center gap-0.5 px-1 py-1 rounded-xl transition-all min-w-0 flex-shrink-0"
                 style={{ color: active ? '#ea00ea' : '#7a7a8c' }}
               >
                 <div className="rounded-lg p-1.5 transition-all" style={{
@@ -194,7 +196,7 @@ export default function Layout({ children, currentPageName }) {
                 }}>
                   <Icon className="h-4 w-4" />
                 </div>
-                <span className="text-[9px] font-medium truncate">{item.name}</span>
+                <span className="text-[8px] font-medium truncate">{item.name}</span>
               </Link>
             );
           })}
