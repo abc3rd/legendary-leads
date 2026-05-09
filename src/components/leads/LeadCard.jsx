@@ -8,6 +8,7 @@ import SentimentGauge from './SentimentGauge';
 import LeadScoreBadge from './LeadScoreBadge';
 import ChurnRiskBadge from './ChurnRiskBadge';
 import BookMeetingButton from './BookMeetingButton';
+import LeadNotes from './LeadNotes';
 
 const STATUS_COLORS = {
   new: { bg: '#4acbbf', text: '#0a1929' },
@@ -193,6 +194,7 @@ export default function LeadCard({ lead, onEnriched }) {
             </span>
           </div>
         )}
+        <LeadNotes lead={lead} />
       </CardContent>
     </Card>
   );

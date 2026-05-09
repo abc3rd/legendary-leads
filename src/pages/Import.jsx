@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useOnboarding } from '@/components/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
-import { Upload, CheckCircle2, AlertCircle, ArrowLeft, Loader2, ShieldCheck, FileText } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ArrowLeft, Loader2, ShieldCheck, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 import ColumnMapper from '../components/import/ColumnMapper';
+import DragDropImport from '../components/import/DragDropImport';
 
 // ─── Validators ──────────────────────────────────────────────────────────────
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(email).trim());
@@ -59,16 +60,11 @@ export default function Import() {
   const [stats, setStats] = useState(null);
   const { markChecked } = useOnboarding();
 
-  const handleFileChange = async (e) => {
-    const selected = Array.from(e.target.files).filter(f => f.name.endsWith('.csv') || f.type === 'text/csv');
-    if (!selected.length) { toast.error('Please select a valid CSV file'); return; }
-
-    setFiles(selected);
+  const handleFileSelected = async (file) => {
+    setFiles([file]);
     setStats(null);
     setProgress(null);
 
-    // Parse first file headers + sample rows for mapping step
-    const file = selected[0];
     const lines = [];
     for await (const line of readLines(file)) {
       lines.push(line);
@@ -207,17 +203,7 @@ export default function Import() {
                 <p className="text-xs mt-2" style={{ color: '#9ea7b5' }}>Column names are flexible — you'll map them in the next step.</p>
               </div>
 
-              <div className="rounded-xl p-10 text-center transition-all" style={{ border: '2px dashed #5e6a78' }}>
-                <input type="file" accept=".csv,text/csv" onChange={handleFileChange}
-                  className="hidden" id="csv-upload" multiple />
-                <label htmlFor="csv-upload" className="cursor-pointer flex flex-col items-center gap-3">
-                  <div className="h-14 w-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #54b0e7 0%, #4acbbf 100%)' }}>
-                    <Upload className="h-7 w-7" style={{ color: '#0a1929' }} />
-                  </div>
-                  <p className="font-semibold" style={{ color: '#ffffff' }}>Click to upload CSV files</p>
-                  <p className="text-sm" style={{ color: '#9ea7b5' }}>Column mapping wizard included</p>
-                </label>
-              </div>
+              <DragDropImport onFileSelected={handleFileSelected} />
             </div>
           )}
 
