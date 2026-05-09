@@ -1,0 +1,117 @@
+{
+  "name": "WorkflowRule",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Workflow rule name"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "status_change",
+        "score_change",
+        "score_threshold"
+      ],
+      "default": "status_change",
+      "description": "What triggers this workflow"
+    },
+    "trigger_status_from": {
+      "type": "string",
+      "description": "For status_change: previous status (any if blank)"
+    },
+    "trigger_status_to": {
+      "type": "string",
+      "description": "For status_change: new status"
+    },
+    "trigger_score_above": {
+      "type": "number",
+      "description": "For score_threshold: fire when score >= this"
+    },
+    "trigger_score_below": {
+      "type": "number",
+      "description": "For score_threshold: fire when score <= this"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "trigger_sequence",
+        "assign_team_member",
+        "add_tag"
+      ],
+      "default": "trigger_sequence",
+      "description": "Action to take"
+    },
+    "sequence_id": {
+      "type": "string",
+      "description": "FollowUpSequence ID to trigger"
+    },
+    "sequence_name": {
+      "type": "string",
+      "description": "Cached sequence name"
+    },
+    "assign_to_email": {
+      "type": "string",
+      "description": "Team member email to assign"
+    },
+    "assign_to_name": {
+      "type": "string",
+      "description": "Team member name"
+    },
+    "add_tag_value": {
+      "type": "string",
+      "description": "Tag to add to the lead"
+    },
+    "filter_category": {
+      "type": "string",
+      "description": "Only apply to leads in this category"
+    },
+    "filter_min_followers": {
+      "type": "number",
+      "description": "Only apply to leads with >= followers"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "run_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total times fired"
+    }
+  },
+  "required": [
+    "name",
+    "trigger_type",
+    "action_type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
