@@ -53,20 +53,14 @@
     "body"
   ],
   "rls": {
-    "create": {
-      "user_condition": {
-        "role": {
-          "$in": [
-            "admin",
-            "user"
-          ]
-        }
-      }
-    },
+    "create": {},
     "read": {
       "$or": [
         {
           "created_by": "{{user.email}}"
+        },
+        {
+          "data.author_email": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -81,6 +75,9 @@
           "created_by": "{{user.email}}"
         },
         {
+          "data.author_email": "{{user.email}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
@@ -91,6 +88,9 @@
       "$or": [
         {
           "created_by": "{{user.email}}"
+        },
+        {
+          "data.author_email": "{{user.email}}"
         },
         {
           "user_condition": {
