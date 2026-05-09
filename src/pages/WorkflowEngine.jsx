@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -60,7 +59,6 @@ function RuleModal({ rule, sequences, onClose, onSaved }) {
               style={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }} />
           </div>
 
-          {/* Trigger */}
           <div className="rounded-xl p-4 space-y-3" style={{ background: 'rgba(248,212,23,0.05)', border: '1px solid rgba(248,212,23,0.2)' }}>
             <p className="text-xs font-bold" style={{ color: '#f8d417' }}>⚡ TRIGGER</p>
             <div>
@@ -105,7 +103,6 @@ function RuleModal({ rule, sequences, onClose, onSaved }) {
             )}
           </div>
 
-          {/* Filters */}
           <div className="rounded-xl p-4 space-y-3" style={{ background: 'rgba(84,176,231,0.05)', border: '1px solid rgba(84,176,231,0.15)' }}>
             <p className="text-xs font-bold" style={{ color: '#54b0e7' }}>🔍 FILTERS (optional)</p>
             <div className="grid grid-cols-2 gap-3">
@@ -122,7 +119,6 @@ function RuleModal({ rule, sequences, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* Action */}
           <div className="rounded-xl p-4 space-y-3" style={{ background: 'rgba(74,203,191,0.05)', border: '1px solid rgba(74,203,191,0.2)' }}>
             <p className="text-xs font-bold" style={{ color: '#4acbbf' }}>🎯 ACTION</p>
             <div>
@@ -208,7 +204,7 @@ export default function WorkflowEngine() {
     if (rule.trigger_type === 'status_change') {
       const from = rule.trigger_status_from ? rule.trigger_status_from.replace(/_/g,' ') : 'any status';
       const to = (rule.trigger_status_to || '').replace(/_/g,' ');
-      return `Status changes from "${from}" → "${to}"`;
+      return `Status: "${from}" → "${to}"`;
     }
     if (rule.trigger_type === 'score_threshold') {
       const parts = [];
@@ -220,9 +216,9 @@ export default function WorkflowEngine() {
   };
 
   const getActionLabel = (rule) => {
-    if (rule.action_type === 'trigger_sequence') return `Send sequence: "${rule.sequence_name || rule.sequence_id}"`;
+    if (rule.action_type === 'trigger_sequence') return `Send: "${rule.sequence_name || rule.sequence_id}"`;
     if (rule.action_type === 'assign_team_member') return `Assign to ${rule.assign_to_name || rule.assign_to_email}`;
-    if (rule.action_type === 'add_tag') return `Add tag: "${rule.add_tag_value}"`;
+    if (rule.action_type === 'add_tag') return `Tag: "${rule.add_tag_value}"`;
     return '—';
   };
 
@@ -236,7 +232,7 @@ export default function WorkflowEngine() {
             </div>
             <div>
               <h1 className="text-2xl font-bold" style={{ color: '#f8d417', fontFamily: 'Poppins, sans-serif' }}>Workflow Engine</h1>
-              <p className="text-xs" style={{ color: '#9ea7b5' }}>Conditional automation rules — trigger sequences when leads change</p>
+              <p className="text-xs" style={{ color: '#9ea7b5' }}>Conditional automation rules triggered by lead changes</p>
             </div>
           </div>
           <Button onClick={() => { setEditing(null); setShowModal(true); }}
@@ -248,7 +244,7 @@ export default function WorkflowEngine() {
         <div className="rounded-xl p-4 mb-6 flex items-start gap-3" style={{ background: 'rgba(248,212,23,0.07)', border: '1px solid rgba(248,212,23,0.25)' }}>
           <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#f8d417' }} />
           <p className="text-xs" style={{ color: '#9ea7b5' }}>
-            <strong style={{ color: '#f8d417' }}>How it works:</strong> Rules are evaluated when leads are updated. When a trigger matches, the configured action fires automatically. Rules fire once per matching event.
+            <strong style={{ color: '#f8d417' }}>How it works:</strong> Rules fire when a lead's status or score changes and the trigger condition matches. Actions run automatically — sequences send, leads get assigned, or tags are applied.
           </p>
         </div>
 

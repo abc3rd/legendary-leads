@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Users, Plus, Mail, Activity, MessageSquare, UserCheck, Star, Loader2, Trash2, Send, RefreshCw } from 'lucide-react';
+import { Users, Plus, Mail, Activity, MessageSquare, UserCheck, Star, Loader2, Send, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -68,8 +67,6 @@ function InviteModal({ onClose, onInvited }) {
 function ActivityItem({ item }) {
   const Icon = ACTIVITY_ICONS[item.activity_type] || MessageSquare;
   const color = ACTIVITY_COLORS[item.activity_type] || '#4acbbf';
-  let meta = {};
-  try { meta = JSON.parse(item.activity_meta || '{}'); } catch {}
 
   return (
     <div className="flex items-start gap-3 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
@@ -113,10 +110,6 @@ export default function TeamDashboard() {
     queryFn: () => base44.entities.LeadNote.list('-created_date', 50),
     refetchInterval: 30000,
   });
-  const { data: assignments = [] } = useQuery({
-    queryKey: ['lead_assignments_team'],
-    queryFn: () => base44.entities.LeadAssignment.list(),
-  });
 
   const postNote = async () => {
     if (!noteText.trim()) return;
@@ -137,12 +130,9 @@ export default function TeamDashboard() {
     setPostingNote(false);
   };
 
-  // Stats
   const totalLeads = leads.length;
   const assignedLeads = leads.filter(l => l.assigned_to).length;
-  const teamSize = users.length;
 
-  // Leads by assignee
   const byAssignee = users.map(u => ({
     user: u,
     count: leads.filter(l => l.assigned_to === u.email).length,
@@ -152,7 +142,6 @@ export default function TeamDashboard() {
   return (
     <div className="min-h-screen p-4 sm:p-6" style={{ background: '#0a1929' }}>
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ea00ea, #4acbbf)' }}>
@@ -168,10 +157,9 @@ export default function TeamDashboard() {
           </Button>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
-            { label: 'Team Members', value: teamSize, color: '#ea00ea' },
+            { label: 'Team Members', value: users.length, color: '#ea00ea' },
             { label: 'Total Leads', value: totalLeads, color: '#4acbbf' },
             { label: 'Assigned', value: assignedLeads, color: '#f8d417' },
             { label: 'Unassigned', value: totalLeads - assignedLeads, color: '#f66c25' },
@@ -184,7 +172,6 @@ export default function TeamDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Team Members & Workload */}
           <div className="lg:col-span-1">
             <div className="rounded-xl p-4" style={CARD}>
               <h2 className="text-sm font-bold mb-3 flex items-center gap-2" style={{ color: '#ea00ea' }}>
@@ -222,9 +209,7 @@ export default function TeamDashboard() {
             </div>
           </div>
 
-          {/* Activity Feed + Note Composer */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Compose Note */}
             <div className="rounded-xl p-4" style={CARD}>
               <h2 className="text-sm font-bold mb-3 flex items-center gap-2" style={{ color: '#4acbbf' }}>
                 <MessageSquare className="h-4 w-4" /> Post to Activity Feed
@@ -237,7 +222,7 @@ export default function TeamDashboard() {
                 </select>
                 <div className="flex gap-2">
                   <Input value={noteText} onChange={e => setNoteText(e.target.value)}
-                    placeholder="Add a note or comment for the team…"
+                    placeholder="Add a note for the team…"
                     onKeyDown={e => e.key === 'Enter' && !e.shiftKey && postNote()}
                     style={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }} />
                   <Button onClick={postNote} disabled={postingNote || !noteText.trim()}
@@ -248,7 +233,6 @@ export default function TeamDashboard() {
               </div>
             </div>
 
-            {/* Feed */}
             <div className="rounded-xl p-4" style={CARD}>
               <h2 className="text-sm font-bold mb-1 flex items-center gap-2" style={{ color: '#f8d417' }}>
                 <Activity className="h-4 w-4" /> Team Activity Feed

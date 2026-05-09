@@ -61,8 +61,8 @@ import Messaging from './pages/Messaging.jsx';
 import SocialScraper from './pages/SocialScraper.jsx';
 import RoundRobin from './pages/RoundRobin.jsx';
 import Webhooks from './pages/Webhooks.jsx';
-import WorkflowEngine from './pages/WorkflowEngine.jsx';
-import TeamDashboard from './pages/TeamDashboard.jsx';
+import WorkflowEngine from './pages/WorkflowEngine';
+import TeamDashboard from './pages/TeamDashboard';
 import __Layout from './Layout.jsx';
 
 
