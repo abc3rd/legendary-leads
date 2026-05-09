@@ -63,6 +63,7 @@ import RoundRobin from './pages/RoundRobin.jsx';
 import Webhooks from './pages/Webhooks.jsx';
 import WorkflowEngine from './pages/WorkflowEngine';
 import TeamDashboard from './pages/TeamDashboard';
+import Templates from './pages/Templates.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -83,6 +84,7 @@ export const PAGES = {
     "Webhooks": Webhooks,
     "WorkflowEngine": WorkflowEngine,
     "TeamDashboard": TeamDashboard,
+    "Templates": Templates,
 }
 
 export const pagesConfig = {
