@@ -67,15 +67,38 @@
     },
     "sentiment_score": {
       "type": "number",
-      "description": "Sentiment score 0\u2013100 (0=very negative, 50=neutral, 100=very positive)"
+      "description": "Sentiment score 0\u2013100"
     },
     "sentiment_summary": {
       "type": "string",
-      "description": "AI-generated summary of why this sentiment was assigned"
+      "description": "AI-generated sentiment summary"
     },
     "sentiment_analyzed_at": {
       "type": "string",
       "description": "ISO timestamp of last sentiment analysis"
+    },
+    "lead_score": {
+      "type": "number",
+      "description": "AI-calculated conversion probability score 0\u2013100"
+    },
+    "lead_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "F"
+      ],
+      "description": "Letter grade for lead quality"
+    },
+    "lead_score_summary": {
+      "type": "string",
+      "description": "AI explanation of the lead score"
+    },
+    "lead_score_at": {
+      "type": "string",
+      "description": "ISO timestamp of last lead score calculation"
     }
   },
   "required": [],

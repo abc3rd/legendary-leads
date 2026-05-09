@@ -1,13 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Sparkles, Upload, Database, Zap, Settings, BarChart2 } from 'lucide-react';
+import { Sparkles, Upload, Database, Zap, Settings, BarChart2, Map } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BOTTOM_NAV = [
-
   { name: 'Dashboard', path: 'Dashboard', icon: Sparkles },
   { name: 'Leads', path: 'Leads', icon: Database },
+  { name: 'Map', path: 'MapView', icon: Map },
   { name: 'Import', path: 'Import', icon: Upload },
   { name: 'Sequences', path: 'Sequences', icon: Zap },
   { name: 'Analytics', path: 'Analytics', icon: BarChart2 },
@@ -19,12 +19,10 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const scrollPositions = useRef({});
 
-  // Save scroll position before leaving a page
   const saveScroll = () => {
     scrollPositions.current[currentPageName] = window.scrollY;
   };
 
-  // Restore scroll position when page changes
   useEffect(() => {
     const saved = scrollPositions.current[currentPageName];
     window.scrollTo(0, saved || 0);
@@ -34,11 +32,10 @@ export default function Layout({ children, currentPageName }) {
 
   const handleNavClick = (e, path) => {
     saveScroll();
-  saveScroll();
-  if (isActive(path)) {
-    e.preventDefault();
-    navigate(createPageUrl(path), { replace: true });
-  }
+    if (isActive(path)) {
+      e.preventDefault();
+      navigate(createPageUrl(path), { replace: true });
+    }
   };
 
   return (
@@ -75,16 +72,10 @@ export default function Layout({ children, currentPageName }) {
         }
 
         @media (prefers-color-scheme: dark) {
-          :root {
-            --background: #0d0d1a;
-            --text-primary: #ffffff;
-          }
+          :root { --background: #0d0d1a; --text-primary: #ffffff; }
         }
         @media (prefers-color-scheme: light) {
-          :root {
-            --background: #0d0d1a;
-            --text-primary: #ffffff;
-          }
+          :root { --background: #0d0d1a; --text-primary: #ffffff; }
         }
 
         button, a {
@@ -101,7 +92,6 @@ export default function Layout({ children, currentPageName }) {
           padding-top: env(safe-area-inset-top, 0px);
         }
 
-        /* Add bottom padding to main content on mobile so it's not hidden behind bottom nav */
         @media (max-width: 767px) {
           .page-content {
             padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
@@ -140,8 +130,8 @@ export default function Layout({ children, currentPageName }) {
               </Link>
             </div>
 
-            {/* Desktop nav only */}
-            <nav className="hidden md:flex items-center gap-2">
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-1 flex-wrap justify-end">
               {BOTTOM_NAV.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -150,7 +140,7 @@ export default function Layout({ children, currentPageName }) {
                     key={item.path}
                     to={createPageUrl(item.path)}
                     onClick={(e) => handleNavClick(e, item.path)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all font-medium text-sm"
                     style={{
                       background: active ? '#ea00ea' : 'transparent',
                       color: active ? '#ffffff' : '#c3c3c3',
@@ -167,7 +157,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </header>
 
-      {/* Page content with slide transition */}
+      {/* Page content */}
       <AnimatePresence mode="wait" initial={false}>
         <motion.main
           key={currentPageName}
@@ -181,13 +171,13 @@ export default function Layout({ children, currentPageName }) {
         </motion.main>
       </AnimatePresence>
 
-      {/* Mobile Bottom Navigation Bar */}
+      {/* Mobile Bottom Nav */}
       <nav className="bottom-nav-bar fixed bottom-0 left-0 right-0 z-50 md:hidden border-t" style={{
         background: 'var(--nav-bg)',
         backdropFilter: 'blur(12px)',
         borderColor: 'rgba(234,0,234,0.3)'
       }}>
-        <div className="flex items-center justify-around px-2 pt-2 pb-1">
+        <div className="flex items-center justify-around px-1 pt-2 pb-1">
           {BOTTOM_NAV.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -196,15 +186,15 @@ export default function Layout({ children, currentPageName }) {
                 key={item.path}
                 to={createPageUrl(item.path)}
                 onClick={(e) => handleNavClick(e, item.path)}
-                className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all min-w-0"
+                className="flex flex-col items-center gap-0.5 px-1 py-1 rounded-xl transition-all min-w-0"
                 style={{ color: active ? '#ea00ea' : '#7a7a8c' }}
               >
                 <div className="rounded-lg p-1.5 transition-all" style={{
                   background: active ? 'rgba(234,0,234,0.15)' : 'transparent'
                 }}>
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 </div>
-                <span className="text-[10px] font-medium truncate">{item.name}</span>
+                <span className="text-[9px] font-medium truncate">{item.name}</span>
               </Link>
             );
           })}
