@@ -48,6 +48,7 @@ const NAV_GROUPS = [
       { name: 'Team', path: 'TeamDashboard', icon: Users },
       { name: 'Tasks', path: 'TaskBoard', icon: CheckSquare },
       { name: 'Messages', path: 'Messaging', icon: MessageSquare },
+      { name: 'Scheduler', path: 'SmartScheduler', icon: CheckSquare },
     ],
   },
   {

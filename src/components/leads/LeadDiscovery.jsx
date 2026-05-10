@@ -7,6 +7,7 @@ import {
   Globe, Mail, Phone, Users, ExternalLink, X, Plus, AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import ProfileScraper from './ProfileScraper';
 
 const PLATFORMS = [
   { id: 'instagram', label: 'Instagram', color: '#ea00ea' },
@@ -310,6 +311,11 @@ export default function LeadDiscovery({ onLeadsCreated }) {
                 {[5, 10, 15, 20].map(n => <option key={n} value={n}>{n} leads</option>)}
               </select>
             </div>
+          </div>
+
+          {/* Profile URL Scraper */}
+          <div style={{ borderTop: '1px solid rgba(84,176,231,0.2)', paddingTop: '1rem' }}>
+            <ProfileScraper />
           </div>
 
           {/* Tag */}
