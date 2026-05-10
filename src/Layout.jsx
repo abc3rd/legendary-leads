@@ -62,6 +62,7 @@ const NAV_GROUPS = [
     color: '#54b0e7',
     items: [
       { name: 'Analytics', path: 'Analytics', icon: BarChart2 },
+      { name: 'Inbox', path: 'UniversalInbox', icon: MessageSquare },
       { name: 'Webhooks', path: 'Webhooks', icon: Webhook },
     ],
   },

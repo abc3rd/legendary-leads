@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Trash2, LogOut, User, Shield } from 'lucide-react';
+import { AlertTriangle, Trash2, LogOut, User, Shield, Sliders, Inbox } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStatus } from '@/components/hooks/useAuthStatus';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function Settings() {
   const { user } = useAuthStatus();
@@ -65,6 +67,28 @@ export default function Settings() {
             <LogOut className="h-4 w-4" />
             Sign Out
           </Button>
+        </div>
+
+        {/* Quick Links */}
+        <div className="rounded-2xl p-5 mb-4" style={{
+          background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)',
+          border: '1.5px solid rgba(248,212,23,0.25)'
+        }}>
+          <h2 className="font-semibold text-sm mb-3" style={{ color: '#f8d417' }}>Tools & Configuration</h2>
+          <div className="space-y-2">
+            <Link to={createPageUrl('LeadScoringSettings')}>
+              <Button variant="ghost" className="w-full justify-start gap-2"
+                style={{ color: '#f8d417', border: '1px solid rgba(248,212,23,0.25)' }}>
+                <Sliders className="h-4 w-4" /> Lead Scoring Rules
+              </Button>
+            </Link>
+            <Link to={createPageUrl('UniversalInbox')}>
+              <Button variant="ghost" className="w-full justify-start gap-2"
+                style={{ color: '#ea00ea', border: '1px solid rgba(234,0,234,0.25)' }}>
+                <Inbox className="h-4 w-4" /> Universal Inbox
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Privacy & Data */}

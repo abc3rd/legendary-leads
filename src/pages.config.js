@@ -65,6 +65,8 @@ import WorkflowEngine from './pages/WorkflowEngine';
 import TeamDashboard from './pages/TeamDashboard';
 import Templates from './pages/Templates.jsx';
 import LegenDatabase from './pages/LegenDatabase.jsx';
+import UniversalInbox from './pages/UniversalInbox.jsx';
+import LeadScoringSettings from './pages/LeadScoringSettings.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
 import __Layout from './Layout.jsx';
@@ -89,6 +91,8 @@ export const PAGES = {
     "TeamDashboard": TeamDashboard,
     "Templates": Templates,
     "LegenDatabase": LegenDatabase,
+    "UniversalInbox": UniversalInbox,
+    "LeadScoringSettings": LeadScoringSettings,
     "About": About,
     "Contact": Contact,
 }
