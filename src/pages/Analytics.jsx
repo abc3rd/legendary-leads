@@ -5,6 +5,7 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { Loader2, TrendingUp, Users, Eye, Clock, MousePointerClick, UserPlus, Filter, GitBranch, BarChart2, Download } from 'lucide-react';
+import TeamPerformance from '../components/analytics/TeamPerformance';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import LeadFunnelChart from '../components/analytics/LeadFunnelChart';
@@ -58,6 +59,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const TABS = [
   { id: 'leads', label: 'Lead Analytics', icon: GitBranch },
+  { id: 'team', label: 'Team Performance', icon: Users },
   { id: 'ga4', label: 'Web Analytics', icon: BarChart2 },
   { id: 'export', label: 'Export', icon: Download },
 ];
@@ -206,6 +208,9 @@ export default function Analytics() {
             )}
           </div>
         )}
+
+        {/* ── Team Performance Tab ── */}
+        {activeTab === 'team' && <TeamPerformance />}
 
         {/* ── Export Tab ── */}
         {activeTab === 'export' && (
