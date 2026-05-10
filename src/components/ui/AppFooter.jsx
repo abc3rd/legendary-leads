@@ -27,12 +27,13 @@ const ECOSYSTEM_LINKS = [
     ],
   },
   {
-    category: 'Legal',
+    category: 'Legal & Info',
     color: '#54b0e7',
     links: [
+      { label: 'About Legendary Leads', url: '#', internal: 'About', icon: FileText },
+      { label: 'Contact Us', url: '#', internal: 'Contact', icon: FileText },
       { label: 'Terms & Conditions', url: 'https://syncloudconnect.com', icon: FileText },
       { label: 'Privacy Policy', url: 'https://syncloudconnect.com', icon: Shield },
-      { label: 'Cookie Policy', url: 'https://syncloudconnect.com', icon: Shield },
     ],
   },
   {

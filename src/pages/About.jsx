@@ -1,60 +1,81 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Database, Zap, Users, BarChart2, Shield, Mail } from 'lucide-react';
+import { Sparkles, Database, Zap, Users, BarChart2, GitBranch, Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function About() {
   return (
-    <div className="min-h-screen p-6 sm:p-10" style={{ background: '#0a1929', color: '#fff' }}>
+    <div className="min-h-screen p-6 sm:p-10" style={{ background: '#0a1929' }}>
       <div className="max-w-3xl mx-auto">
 
-        <h1 className="text-4xl sm:text-5xl font-bold mb-6" style={{ fontFamily: 'Poppins, sans-serif', background: 'linear-gradient(135deg, #f8d417, #4acbbf)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          About Legendary Leads
-        </h1>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-10 w-10 rounded-xl flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, #ea00ea, #4acbbf)' }}>
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold" style={{ color: '#ea00ea', fontFamily: 'Poppins, sans-serif' }}>
+              About Legendary Leads
+            </h1>
+            <p className="text-xs" style={{ color: '#9ea7b5' }}>AI-powered lead generation & outreach platform</p>
+          </div>
+        </div>
 
-        <p className="text-lg mb-6 leading-relaxed" style={{ color: '#d7dde5' }}>
-          <strong style={{ color: '#4acbbf' }}>Legendary Leads</strong> is an AI-powered CRM and lead generation platform built for modern sales teams, digital marketers, influencer outreach specialists, and growth-focused entrepreneurs. Whether you are managing hundreds of Instagram influencer profiles, running email and SMS follow-up campaigns, or orchestrating complex sales workflows, Legendary Leads gives you a single command center to do it all — intelligently and at scale.
-        </p>
+        <div className="rounded-2xl p-6 sm:p-8 mb-6 space-y-4"
+          style={{ background: 'linear-gradient(135deg, #0a1929, #13202e)', border: '1.5px solid rgba(234,0,234,0.2)' }}>
+          <p className="text-base leading-relaxed" style={{ color: '#d7dde5' }}>
+            <strong style={{ color: '#f8d417' }}>Legendary Leads</strong> is an AI-powered CRM and lead generation platform built for
+            social media marketers, agency owners, and sales teams who need a smarter way to find, score, and convert
+            high-quality leads from Instagram, TikTok, and other social platforms.
+          </p>
+          <p className="text-base leading-relaxed" style={{ color: '#d7dde5' }}>
+            At its core, Legendary Leads features <strong style={{ color: '#4acbbf' }}>GLYTCH</strong> — an AI butler that lets you
+            search and filter your entire lead database using plain English. Simply ask for "fitness coaches with over 10k
+            followers who have an email address," and GLYTCH delivers results instantly, no complex filters required.
+          </p>
+          <p className="text-base leading-relaxed" style={{ color: '#d7dde5' }}>
+            The platform includes a full <strong style={{ color: '#4acbbf' }}>LegenDatabase</strong> for storing and querying imported
+            leads and PLR content, automated <strong style={{ color: '#f8d417' }}>Follow-Up Sequences</strong> via email and SMS,
+            a visual <strong style={{ color: '#f8d417' }}>Workflow Engine</strong> for trigger-based automations, AI-powered
+            lead scoring and sentiment analysis, a team collaboration dashboard with round-robin assignment, and
+            a built-in analytics suite with Google Analytics 4 integration.
+          </p>
+          <p className="text-base leading-relaxed" style={{ color: '#d7dde5' }}>
+            Legendary Leads is built and maintained by <strong style={{ color: '#ea00ea' }}>Omega UI, LLC</strong> — the creators of
+            SynCloud Connect and the Universal Command Protocol (UCP). Our mission is to help businesses reclaim AI
+            operational costs and build deterministic, zero-waste intelligence pipelines. Whether you are a solo
+            entrepreneur or scaling an agency, Legendary Leads gives you the infrastructure to grow smarter.
+          </p>
+        </div>
 
-        <p className="text-base mb-6 leading-relaxed" style={{ color: '#9ea7b5' }}>
-          At its core, Legendary Leads is built around <strong style={{ color: '#f8d417' }}>GLYTCH</strong>, an advanced AI butler that understands natural language. Ask GLYTCH to find fitness coaches with over 10,000 followers, surface leads with email addresses in a specific area code, or identify your highest-scoring unresponsive prospects — and it delivers results instantly, without needing complex filters or SQL queries.
-        </p>
-
-        <p className="text-base mb-6 leading-relaxed" style={{ color: '#9ea7b5' }}>
-          The platform includes a powerful <strong style={{ color: '#ea00ea' }}>LegenDatabase</strong> module — a unified search hub for leads, PLR content, ebooks, and original articles — all searchable with AI precision. On top of that, the <strong style={{ color: '#4acbbf' }}>Workflow Engine</strong> automates your outreach by triggering follow-up sequences, auto-assigning team members, and tagging leads the moment key status changes or score thresholds are met.
-        </p>
-
-        <p className="text-base mb-8 leading-relaxed" style={{ color: '#9ea7b5' }}>
-          Legendary Leads is designed for teams that move fast. With round-robin lead assignment, team collaboration tools, real-time activity feeds, voice outreach support, and deep analytics, every member of your team stays aligned and every lead gets the attention it deserves. The platform was built by developers passionate about combining beautiful design with enterprise-grade functionality — making powerful CRM tools accessible to businesses of every size.
-        </p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
           {[
-            { icon: Database, label: 'Lead Management', color: '#4acbbf' },
-            { icon: Zap, label: 'AI Outreach', color: '#f8d417' },
-            { icon: Users, label: 'Team Collaboration', color: '#ea00ea' },
-            { icon: BarChart2, label: 'Deep Analytics', color: '#54b0e7' },
-            { icon: Shield, label: 'Workflow Automation', color: '#f66c25' },
-            { icon: Mail, label: 'Email & SMS', color: '#2ecc71' },
-          ].map(({ icon: Icon, label, color }) => (
-            <div key={label} className="rounded-xl p-4 flex flex-col items-center gap-2 text-center"
-              style={{ background: `${color}12`, border: `1px solid ${color}30` }}>
-              <Icon className="h-6 w-6" style={{ color }} />
+            { Icon: Database, label: 'Lead Database', color: '#ea00ea' },
+            { Icon: Sparkles, label: 'GLYTCH AI Butler', color: '#4acbbf' },
+            { Icon: Zap, label: 'Outreach Sequences', color: '#f8d417' },
+            { Icon: GitBranch, label: 'Workflow Engine', color: '#54b0e7' },
+            { Icon: BarChart2, label: 'Analytics & Insights', color: '#f66c25' },
+            { Icon: Users, label: 'Team Collaboration', color: '#a78bfa' },
+          ].map(({ Icon, label, color }) => (
+            <div key={label} className="rounded-xl p-4 flex items-center gap-3"
+              style={{ background: `${color}10`, border: `1px solid ${color}30` }}>
+              <Icon className="h-5 w-5 flex-shrink-0" style={{ color: color }} />
               <span className="text-xs font-semibold" style={{ color: '#d7dde5' }}>{label}</span>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-4">
-          <Link to={createPageUrl('Contact')}
-            className="px-6 py-3 rounded-xl font-semibold text-sm"
-            style={{ background: 'linear-gradient(135deg, #ea00ea, #4acbbf)', color: '#fff' }}>
-            Contact Us
+        <div className="flex gap-3 flex-wrap">
+          <Link to={createPageUrl('Dashboard')}>
+            <Button style={{ background: 'linear-gradient(135deg, #ea00ea, #4acbbf)', color: '#fff' }}>
+              Get Started
+            </Button>
           </Link>
-          <Link to={createPageUrl('Dashboard')}
-            className="px-6 py-3 rounded-xl font-semibold text-sm"
-            style={{ background: 'rgba(255,255,255,0.08)', color: '#d7dde5', border: '1px solid rgba(255,255,255,0.15)' }}>
-            Go to Dashboard
+          <Link to={createPageUrl('Contact')}>
+            <Button variant="ghost" style={{ color: '#9ea7b5', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <Mail className="h-4 w-4 mr-1.5" /> Contact Us
+            </Button>
           </Link>
         </div>
       </div>
