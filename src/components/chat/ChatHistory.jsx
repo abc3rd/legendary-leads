@@ -162,11 +162,14 @@ export default function ChatHistory({ authState, currentConversationId, onSelect
               {expandedDates.has(label) && (
                 <div className="space-y-1 px-2">
                   {convos.map(convo => (
-                    <button
+                    <div
                       key={convo.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => onSelectConversation(convo.id)}
+                      onKeyDown={e => e.key === 'Enter' && onSelectConversation(convo.id)}
                       className={cn(
-                        "w-full px-2 sm:px-3 py-2 rounded-lg flex items-start gap-2 group transition-all text-left",
+                        "w-full px-2 sm:px-3 py-2 rounded-lg flex items-start gap-2 group transition-all text-left cursor-pointer",
                         convo.id === currentConversationId
                           ? "bg-opacity-100"
                           : "hover:bg-opacity-50"
@@ -190,10 +193,11 @@ export default function ChatHistory({ authState, currentConversationId, onSelect
                       <button
                         onClick={(e) => deleteConversation(convo.id, e)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-600/20 rounded flex-shrink-0"
+                        aria-label="Delete conversation"
                       >
                         <Trash2 className="h-3 w-3" style={{ color: '#f66c25' }} />
                       </button>
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}

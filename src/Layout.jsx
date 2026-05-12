@@ -301,6 +301,8 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const scrollPositions = useRef({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Optimistic active tab — updates instantly on tap before route change completes
+  const [optimisticTab, setOptimisticTab] = useState(null);
 
   // Determine if we're on a "child" page (not Dashboard/Home)
   const rootPages = ['Dashboard', 'Home'];
@@ -317,21 +319,40 @@ export default function Layout({ children, currentPageName }) {
   }, [saveScroll]);
 
   useEffect(() => {
+    // Restore scroll for this page (stack preservation)
     const saved = scrollPositions.current[currentPageName];
     window.scrollTo(0, saved || 0);
     setMobileMenuOpen(false);
+    // Clear optimistic tab once real route matches
+    setOptimisticTab(null);
   }, [currentPageName]);
 
   return (
     <div className="min-h-screen" style={{ background: '#0a1929', color: '#fff' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600&display=swap');
-        body { font-family: 'Inter', sans-serif; overscroll-behavior: none; -webkit-overflow-scrolling: touch; background: #0a1929; }
+        body {
+          font-family: 'Inter', sans-serif;
+          overscroll-behavior: none;
+          overscroll-behavior-y: none;
+          -webkit-overflow-scrolling: touch;
+          background: #0a1929;
+        }
         h1,h2,h3,h4,h5,h6 { font-family: 'Poppins', sans-serif; font-weight: 700; }
-        button,a { -webkit-tap-highlight-color: transparent; }
-        @media (max-width: 767px) { .page-content { padding-bottom: calc(72px + env(safe-area-inset-bottom,0px)); } }
+        button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        /* Prevent sticky header from being pulled past top on Android */
+        header.sticky { transform: translateZ(0); will-change: transform; }
+        /* Bottom tab bar: fixed, won't scroll with content, hardware-accelerated */
+        .bottom-tab-bar { transform: translateZ(0); will-change: transform; }
+        @media (max-width: 767px) {
+          .page-content { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+          /* Block pull-to-refresh on Android Chrome except at top */
+          html { overscroll-behavior-y: none; }
+        }
         .safe-top { padding-top: env(safe-area-inset-top, 0px); }
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+        /* Native-feel select/dropdown on Android */
+        select { -webkit-appearance: none; appearance: none; }
       `}</style>
 
       {/* ── Header ── */}
@@ -419,21 +440,27 @@ export default function Layout({ children, currentPageName }) {
       <AppFooter />
 
       {/* Mobile bottom tab bar */}
-      <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-40 md:hidden"
+      <nav className="bottom-tab-bar safe-bottom fixed bottom-0 left-0 right-0 z-40 md:hidden"
         style={{ background: 'rgba(8,14,24,0.97)', backdropFilter: 'blur(16px)', borderTop: '1px solid rgba(234,0,234,0.15)' }}>
         <div className="flex items-center justify-around px-2 pt-2 pb-1">
           {MOBILE_NAV.map(item => {
             const Icon = item.icon;
-            const active = currentPageName === item.path;
+            // Optimistic: show active immediately on tap, before route resolves
+            const active = optimisticTab ? optimisticTab === item.path : currentPageName === item.path;
             return (
-              <Link key={item.path} to={createPageUrl(item.path)}
-                className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all"
-                style={{ color: active ? '#ea00ea' : '#5e6a78' }}>
+              <Link
+                key={item.path}
+                to={createPageUrl(item.path)}
+                replace={currentPageName === item.path} // don't push duplicate stack entry
+                onClick={() => setOptimisticTab(item.path)}
+                className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-colors"
+                style={{ color: active ? '#ea00ea' : '#5e6a78', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
+              >
                 <motion.div
                   className="h-7 w-7 rounded-lg flex items-center justify-center"
                   style={{ background: active ? 'rgba(234,0,234,0.18)' : 'transparent' }}
                   animate={{ scale: active ? 1.1 : 1 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 >
                   <Icon className="h-4 w-4" />
                 </motion.div>
@@ -445,7 +472,7 @@ export default function Layout({ children, currentPageName }) {
           <button
             onClick={() => setMobileMenuOpen(true)}
             className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl"
-            style={{ color: '#5e6a78' }}>
+            style={{ color: '#5e6a78', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}>
             <div className="h-7 w-7 rounded-lg flex items-center justify-center">
               <Menu className="h-4 w-4" />
             </div>
