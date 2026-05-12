@@ -10,18 +10,10 @@ export default function GoogleSheetSync({ leads }) {
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState(() => localStorage.getItem('ll_sheet_last_sync') || null);
   const [syncResult, setSyncResult] = useState(null);
-  const [autoSync, setAutoSync] = useState(() => localStorage.getItem('ll_sheet_autosync') === 'true');
 
   const saveSheetId = (val) => {
     setSpreadsheetId(val);
     localStorage.setItem('ll_sheet_id', val);
-  };
-
-  const toggleAutoSync = () => {
-    const next = !autoSync;
-    setAutoSync(next);
-    localStorage.setItem('ll_sheet_autosync', String(next));
-    toast.success(next ? 'Auto-sync enabled — updates push on every status change' : 'Auto-sync disabled');
   };
 
   const runSync = async () => {
@@ -123,22 +115,18 @@ export default function GoogleSheetSync({ leads }) {
           </div>
         </div>
 
-        {/* Auto-sync toggle */}
-        <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)' }}>
-          <div>
-            <p className="text-sm font-semibold" style={{ color: '#fff' }}>Auto-Sync on Status Change</p>
-            <p className="text-xs" style={{ color: '#9ea7b5' }}>Automatically push updates when a lead status changes</p>
+        {/* Auto-sync info */}
+        <div className="rounded-lg p-3" style={{ background: 'rgba(46,204,113,0.05)', border: '1px solid rgba(46,204,113,0.15)' }}>
+          <div className="flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#2ecc71' }} />
+            <div>
+              <p className="text-sm font-semibold" style={{ color: '#fff' }}>Auto-Sync Active</p>
+              <p className="text-xs mt-0.5" style={{ color: '#9ea7b5' }}>
+                A background automation runs on every lead status change and appends a row to the <strong style={{ color: '#2ecc71' }}>Status Change Log</strong> sheet.
+                To enable it, set <code className="px-1 rounded" style={{ background: 'rgba(46,204,113,0.15)', color: '#4acbbf' }}>GOOGLE_SHEET_ID</code> in your app's Environment Variables (Settings → Environment Variables).
+              </p>
+            </div>
           </div>
-          <button
-            onClick={toggleAutoSync}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-            style={{
-              background: autoSync ? 'rgba(46,204,113,0.2)' : 'rgba(255,255,255,0.06)',
-              color: autoSync ? '#2ecc71' : '#9ea7b5',
-              border: `1px solid ${autoSync ? 'rgba(46,204,113,0.4)' : 'rgba(255,255,255,0.1)'}`,
-            }}>
-            {autoSync ? '✓ Enabled' : 'Disabled'}
-          </button>
         </div>
 
         {/* Sync result */}

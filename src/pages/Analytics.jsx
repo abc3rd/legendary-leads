@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { Loader2, TrendingUp, Users, Eye, Clock, MousePointerClick, UserPlus, Filter, GitBranch, BarChart2, Download } from 'lucide-react';
+import { Loader2, TrendingUp, Users, Eye, Clock, MousePointerClick, UserPlus, Filter, GitBranch, BarChart2, Download, Brain, Table2, Flame } from 'lucide-react';
 import TeamPerformance from '../components/analytics/TeamPerformance';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +13,11 @@ import SequencePerformance from '../components/analytics/SequencePerformance';
 import CategoryConversionChart from '../components/analytics/CategoryConversionChart';
 import SentimentTrendChart from '../components/analytics/SentimentTrendChart';
 import ExportPanel from '../components/analytics/ExportPanel';
+import LeadConversionChart from '../components/analytics/LeadConversionChart';
+import LeadSourceChart from '../components/analytics/LeadSourceChart';
+import InteractionHeatMap from '../components/analytics/InteractionHeatMap';
+import AIPerformanceCoach from '../components/analytics/AIPerformanceCoach';
+import GoogleSheetSync from '../components/analytics/GoogleSheetSync';
 
 const DATE_RANGES = [
   { label: 'Last 7 days', value: '7daysAgo' },
@@ -60,6 +65,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 const TABS = [
   { id: 'leads', label: 'Lead Analytics', icon: GitBranch },
   { id: 'team', label: 'Team Performance', icon: Users },
+  { id: 'ai_coach', label: 'AI Coach', icon: Brain },
+  { id: 'sheets', label: 'Sheets Sync', icon: Table2 },
   { id: 'ga4', label: 'Web Analytics', icon: BarChart2 },
   { id: 'export', label: 'Export', icon: Download },
 ];
@@ -79,6 +86,10 @@ export default function Analytics() {
   const { data: sequences = [] } = useQuery({
     queryKey: ['sequences_all'],
     queryFn: () => base44.entities.FollowUpSequence.list('-created_date', 100),
+  });
+  const { data: notes = [] } = useQuery({
+    queryKey: ['lead_notes_all'],
+    queryFn: () => base44.entities.LeadNote.list('-created_date', 2000),
   });
 
   // GA4
@@ -193,19 +204,38 @@ export default function Analytics() {
               </div>
             ) : (
               <>
+                <LeadConversionChart leads={leads} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <LeadSourceChart leads={leads} />
+                  <CategoryConversionChart leads={leads} />
+                </div>
+                <InteractionHeatMap notes={notes} />
                 <LeadFunnelChart leads={leads} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <CategoryConversionChart leads={leads} />
                   <SentimentTrendChart leads={leads} />
-                </div>
-                <div className="pt-2">
-                  <h2 className="text-base font-bold mb-4" style={{ color: '#c3c3c3', fontFamily: 'Poppins, sans-serif' }}>
-                    Follow-Up Sequence Performance
-                  </h2>
-                  <SequencePerformance logs={logs} sequences={sequences} />
+                  <div className="rounded-xl p-5" style={{ background: 'linear-gradient(135deg, #0a1929 0%, #13202e 100%)', border: '1.5px solid rgba(234,0,234,0.2)' }}>
+                    <h2 className="text-sm font-bold mb-4" style={{ color: '#c3c3c3', fontFamily: 'Poppins, sans-serif' }}>
+                      Follow-Up Sequence Performance
+                    </h2>
+                    <SequencePerformance logs={logs} sequences={sequences} />
+                  </div>
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* ── AI Coach Tab ── */}
+        {activeTab === 'ai_coach' && (
+          <div className="space-y-4">
+            <AIPerformanceCoach leads={leads} logs={logs} sequences={sequences} notes={notes} />
+          </div>
+        )}
+
+        {/* ── Sheets Sync Tab ── */}
+        {activeTab === 'sheets' && (
+          <div className="space-y-4">
+            <GoogleSheetSync leads={leads} />
           </div>
         )}
 
