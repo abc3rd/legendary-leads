@@ -35,6 +35,7 @@ const NAV_GROUPS = [
     color: '#f8d417',
     items: [
       { name: 'Sequences', path: 'Sequences', icon: Zap },
+      { name: 'Email Campaigns', path: 'EmailCampaigns', icon: MessageSquare },
       { name: 'Templates', path: 'Templates', icon: BookOpen },
       { name: 'Workflows', path: 'WorkflowEngine', icon: GitBranch },
       { name: 'Voice', path: 'VoiceOutreach', icon: Mic },
@@ -67,6 +68,13 @@ const NAV_GROUPS = [
       { name: 'Inbox', path: 'UniversalInbox', icon: MessageSquare },
       { name: 'Webhooks', path: 'Webhooks', icon: Webhook },
     ],
+  },
+  {
+    label: 'Client Portal',
+    icon: Globe,
+    single: true,
+    path: 'ClientPortal',
+    color: '#a78bfa',
   },
   {
     label: 'Settings',

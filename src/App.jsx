@@ -7,6 +7,8 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
+import EmailCampaigns from './pages/EmailCampaigns';
+import ClientPortal from './pages/ClientPortal';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { useEffect } from 'react';
@@ -61,6 +63,8 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/EmailCampaigns" element={<LayoutWrapper currentPageName="EmailCampaigns"><EmailCampaigns /></LayoutWrapper>} />
+      <Route path="/ClientPortal" element={<LayoutWrapper currentPageName="ClientPortal"><ClientPortal /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

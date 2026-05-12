@@ -1,0 +1,52 @@
+{
+  "name": "ClientPortalAsset",
+  "type": "object",
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "description": "ID of the lead this asset belongs to"
+    },
+    "lead_username": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Asset display title"
+    },
+    "description": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of the uploaded file"
+    },
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "pdf",
+        "image",
+        "document",
+        "video",
+        "link",
+        "other"
+      ],
+      "default": "document"
+    },
+    "is_visible": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the client can see this"
+    },
+    "uploaded_by": {
+      "type": "string",
+      "description": "Team member email who uploaded"
+    },
+    "uploaded_by_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "lead_id",
+    "title"
+  ]
+}
