@@ -1,0 +1,71 @@
+{
+  "name": "NicheWatch",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Watch rule name"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords / niches to monitor"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Platforms to scan"
+    },
+    "min_followers": {
+      "type": "number",
+      "default": 1000
+    },
+    "max_followers": {
+      "type": "number",
+      "default": 5000000
+    },
+    "leads_per_run": {
+      "type": "number",
+      "default": 10
+    },
+    "tag": {
+      "type": "string",
+      "description": "Tag to apply to discovered leads"
+    },
+    "trigger_sequence": {
+      "type": "boolean",
+      "default": true,
+      "description": "Auto-trigger new status outreach sequences"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "last_run_at": {
+      "type": "string",
+      "description": "ISO timestamp of last run"
+    },
+    "total_leads_found": {
+      "type": "number",
+      "default": 0
+    },
+    "run_frequency": {
+      "type": "string",
+      "enum": [
+        "hourly",
+        "daily",
+        "weekly"
+      ],
+      "default": "daily"
+    }
+  },
+  "required": [
+    "name",
+    "keywords",
+    "platforms"
+  ]
+}

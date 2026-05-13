@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import {
   Instagram, Twitter, Youtube, Linkedin, Search, Plus, Check,
-  Loader2, Globe, Users, Mail, Phone, ChevronRight, ArrowLeft, Sparkles
+  Loader2, Globe, Users, Mail, Phone, ChevronRight, ArrowLeft, Sparkles, Eye
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import NicheWatchPanel from '@/components/leads/NicheWatchPanel';
 
 const OMEGA = {
   bg: '#0d0d1a',
@@ -33,7 +34,13 @@ const PLATFORMS = [
 const NICHES = ['Fitness & Health', 'Beauty & Fashion', 'Food & Cooking', 'Travel', 'Business & Finance',
   'Tech & Gadgets', 'Parenting', 'Gaming', 'Real Estate', 'Music & Entertainment', 'Motivational', 'Pet Care'];
 
+const SCRAPER_TABS = [
+  { id: 'manual', label: 'Manual Search', icon: Search },
+  { id: 'watches', label: 'Auto-Discovery Watches', icon: Eye },
+];
+
 export default function SocialScraper() {
+  const [activeTab, setActiveTab] = useState('manual');
   const [platform, setPlatform] = useState('instagram');
   const [niche, setNiche] = useState('');
   const [customKeyword, setCustomKeyword] = useState('');
@@ -137,7 +144,7 @@ export default function SocialScraper() {
           </Button>
         </Link>
 
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-5">
           <div className="h-11 w-11 rounded-xl flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #ea00ea, #00c2e0)' }}>
             <Globe className="h-6 w-6 text-white" />
@@ -146,10 +153,38 @@ export default function SocialScraper() {
             <h1 className="text-3xl font-bold" style={{ color: OMEGA.magenta, fontFamily: 'Poppins, sans-serif' }}>
               Social Scraper
             </h1>
-            <p className="text-sm" style={{ color: OMEGA.muted }}>Discover leads from public social media profiles</p>
+            <p className="text-sm" style={{ color: OMEGA.muted }}>Discover leads + proactive niche monitoring</p>
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="flex gap-1 mb-5 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.05)' }}>
+          {SCRAPER_TABS.map(tab => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                className="flex items-center gap-2 flex-1 justify-center px-3 py-2 rounded-lg text-xs font-semibold transition-all"
+                style={{
+                  background: active ? 'rgba(234,0,234,0.2)' : 'transparent',
+                  color: active ? OMEGA.magenta : OMEGA.muted,
+                  border: active ? `1px solid rgba(234,0,234,0.35)` : '1px solid transparent',
+                }}>
+                <Icon className="h-3.5 w-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Auto-Discovery Watches Tab */}
+        {activeTab === 'watches' && (
+          <div className="rounded-2xl p-5" style={{ background: OMEGA.card, border: `1.5px solid ${OMEGA.border}` }}>
+            <NicheWatchPanel />
+          </div>
+        )}
+
+        {activeTab === 'manual' && <>
         {/* Search Config Card */}
         <div className="rounded-2xl p-5 mb-6" style={{ background: OMEGA.card, border: `1.5px solid ${OMEGA.border}` }}>
           {/* Platforms */}
@@ -327,6 +362,7 @@ export default function SocialScraper() {
             </div>
           </div>
         )}
+        </>}
       </div>
     </div>
   );
