@@ -1,75 +1,37 @@
 /**
  * pages.config.js - Page routing configuration
- * 
- * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
- * Pages are auto-registered when you create files in the ./pages/ folder.
- * 
- * THE ONLY EDITABLE VALUE: mainPage
- * This controls which page is the landing page (shown when users visit the app).
- * 
- * Example file structure:
- * 
- *   import HomePage from './pages/HomePage';
- *   import Dashboard from './pages/Dashboard';
- *   import Settings from './pages/Settings';
- *   
- *   export const PAGES = {
- *       "HomePage": HomePage,
- *       "Dashboard": Dashboard,
- *       "Settings": Settings,
- *   }
- *   
- *   export const pagesConfig = {
- *       mainPage: "HomePage",
- *       Pages: PAGES,
- *   };
- * 
- * Example with Layout (wraps all pages):
  *
- *   import Home from './pages/Home';
- *   import Settings from './pages/Settings';
- *   import __Layout from './Layout.jsx';
- *
- *   export const PAGES = {
- *       "Home": Home,
- *       "Settings": Settings,
- *   }
- *
- *   export const pagesConfig = {
- *       mainPage: "Home",
- *       Pages: PAGES,
- *       Layout: __Layout,
- *   };
- *
- * To change the main page from HomePage to Dashboard, use find_replace:
- *   Old: mainPage: "HomePage",
- *   New: mainPage: "Dashboard",
- *
- * The mainPage value must match a key in the PAGES object exactly.
+ * Heavy pages are code-split via React.lazy to boost startup speed
+ * (important for Android WebView deployments).
  */
-import Dashboard from './pages/Dashboard';
+import { lazy } from 'react';
+
+// Eagerly-loaded: landing page + lightweight pages
 import Home from './pages/Home';
 import Import from './pages/Import.jsx';
 import Leads from './pages/Leads';
 import Sequences from './pages/Sequences';
 import Settings from './pages/Settings';
-import Analytics from './pages/Analytics';
-import MapView from './pages/MapView';
-import TaskBoard from './pages/TaskBoard';
-import VoiceOutreach from './pages/VoiceOutreach';
 import Messaging from './pages/Messaging.jsx';
-import SocialScraper from './pages/SocialScraper.jsx';
 import RoundRobin from './pages/RoundRobin.jsx';
 import Webhooks from './pages/Webhooks.jsx';
-import WorkflowEngine from './pages/WorkflowEngine';
-import TeamDashboard from './pages/TeamDashboard';
 import Templates from './pages/Templates.jsx';
-import LegenDatabase from './pages/LegenDatabase.jsx';
-import UniversalInbox from './pages/UniversalInbox.jsx';
 import LeadScoringSettings from './pages/LeadScoringSettings.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
-import SmartScheduler from './pages/SmartScheduler.jsx';
+
+// Lazily-loaded heavy pages (charts, maps, 3D, AI chat, etc.)
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+const MapView = lazy(() => import('./pages/MapView'));
+const VoiceOutreach = lazy(() => import('./pages/VoiceOutreach'));
+const SocialScraper = lazy(() => import('./pages/SocialScraper.jsx'));
+const LegenDatabase = lazy(() => import('./pages/LegenDatabase.jsx'));
+const TaskBoard = lazy(() => import('./pages/TaskBoard'));
+const TeamDashboard = lazy(() => import('./pages/TeamDashboard'));
+const WorkflowEngine = lazy(() => import('./pages/WorkflowEngine'));
+const UniversalInbox = lazy(() => import('./pages/UniversalInbox.jsx'));
+const SmartScheduler = lazy(() => import('./pages/SmartScheduler.jsx'));
 
 import __Layout from './Layout.jsx';
 

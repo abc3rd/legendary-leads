@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Mic, Play, Loader2, CheckCircle2, ChevronDown, ChevronUp,
   Sparkles, Phone, MessageSquare, User, BarChart2, List
@@ -194,22 +195,28 @@ Rewrite this as a natural, highly personalized, conversational version matching 
               {/* Lead Selection */}
               <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)', border: '1.5px solid rgba(84,176,231,0.3)' }}>
                 <h2 className="text-sm font-bold mb-3" style={{ color: '#54b0e7' }}>Select Lead</h2>
-                <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setSelectedLeadId(''); }}
-                  className="w-full rounded-lg px-3 py-2 text-xs mb-2 outline-none"
-                  style={{ background: '#071a2c', color: '#d7dde5', border: '1px solid #2a3a4a' }}>
-                  <option value="">All Statuses</option>
-                  {['new','cold_outreach','contacted','qualified','in_negotiation','unresponsive'].map(s => (
-                    <option key={s} value={s}>{s.replace(/_/g,' ')}</option>
-                  ))}
-                </select>
-                <select value={selectedLeadId} onChange={e => setSelectedLeadId(e.target.value)}
-                  className="w-full rounded-lg px-3 py-2 text-xs outline-none"
-                  style={{ background: '#071a2c', color: '#d7dde5', border: '1px solid #2a3a4a' }}>
-                  <option value="">Choose a lead…</option>
-                  {filteredLeads.map(l => (
-                    <option key={l.id} value={l.id}>{l.name || l.username}{l.category ? ` · ${l.category}` : ''}</option>
-                  ))}
-                </select>
+                <Select value={statusFilter || 'all'} onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v); setSelectedLeadId(''); }}>
+                  <SelectTrigger className="w-full mb-2 text-xs" style={{ background: '#071a2c', color: '#d7dde5', borderColor: '#2a3a4a' }}>
+                    <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent style={{ background: '#1a2332', border: '1px solid #2a3a4a' }}>
+                    <SelectItem value="all" style={{ color: '#9ea7b5' }}>All Statuses</SelectItem>
+                    {['new','cold_outreach','contacted','qualified','in_negotiation','unresponsive'].map(s => (
+                      <SelectItem key={s} value={s} style={{ color: '#fff' }}>{s.replace(/_/g,' ')}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={selectedLeadId || 'none'} onValueChange={(v) => setSelectedLeadId(v === 'none' ? '' : v)}>
+                  <SelectTrigger className="w-full text-xs" style={{ background: '#071a2c', color: '#d7dde5', borderColor: '#2a3a4a' }}>
+                    <SelectValue placeholder="Choose a lead…" />
+                  </SelectTrigger>
+                  <SelectContent style={{ background: '#1a2332', border: '1px solid #2a3a4a' }}>
+                    <SelectItem value="none" style={{ color: '#9ea7b5' }}>Choose a lead…</SelectItem>
+                    {filteredLeads.map(l => (
+                      <SelectItem key={l.id} value={l.id} style={{ color: '#fff' }}>{l.name || l.username}{l.category ? ` · ${l.category}` : ''}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {selectedLead && (
                   <div className="mt-3 rounded-lg p-2.5" style={{ background: 'rgba(84,176,231,0.08)', border: '1px solid rgba(84,176,231,0.2)' }}>
                     <div className="flex items-center gap-2 mb-1">
@@ -276,25 +283,25 @@ Rewrite this as a natural, highly personalized, conversational version matching 
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <button onClick={() => { navigator.clipboard.writeText(result.script); toast.success('Copied!'); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
+                      className="touch-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
                       style={{ background: 'rgba(46,204,113,0.15)', color: '#2ecc71', border: '1px solid rgba(46,204,113,0.3)' }}>
                       <CheckCircle2 className="h-3 w-3" /> Copy
                     </button>
                     <button
                       onClick={() => queueMutation.mutate(result.script)}
                       disabled={queueMutation.isPending}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
+                      className="touch-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
                       style={{ background: 'rgba(234,0,234,0.15)', color: '#ea00ea', border: '1px solid rgba(234,0,234,0.3)' }}>
                       {queueMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Phone className="h-3 w-3" />}
                       Add to Call Queue
                     </button>
                     <button onClick={() => toast.info('Connect a VOIP provider in Settings to enable live calling.')}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
+                      className="touch-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
                       style={{ background: 'rgba(84,176,231,0.12)', color: '#54b0e7', border: '1px solid rgba(84,176,231,0.25)' }}>
                       <Phone className="h-3 w-3" /> Trigger Call
                     </button>
                     <button onClick={() => toast.info('Connect Instagram DM in Settings to send direct messages.')}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
+                      className="touch-target flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
                       style={{ background: 'rgba(155,89,182,0.12)', color: '#9b59b6', border: '1px solid rgba(155,89,182,0.25)' }}>
                       <MessageSquare className="h-3 w-3" /> Send as DM
                     </button>

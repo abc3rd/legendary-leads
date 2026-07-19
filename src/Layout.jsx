@@ -94,6 +94,15 @@ const MOBILE_NAV = [
   { name: 'Analytics', path: 'Analytics', icon: BarChart2 },
 ];
 
+// Maps each page to the bottom-tab that "owns" it (for per-tab history caching)
+const TAB_OWNERSHIP = {
+  Dashboard: 'Dashboard', Home: 'Dashboard',
+  Leads: 'Leads', MapView: 'Leads', Import: 'Leads', SocialScraper: 'Leads', RoundRobin: 'Leads',
+  LegenDatabase: 'LegenDatabase',
+  Sequences: 'Sequences', EmailCampaigns: 'Sequences', Templates: 'Sequences', WorkflowEngine: 'Sequences', VoiceOutreach: 'Sequences',
+  Analytics: 'Analytics', UniversalInbox: 'Analytics', Webhooks: 'Analytics',
+};
+
 // ─── Dropdown ─────────────────────────────────────────────────────────────────
 function NavDropdown({ group, currentPageName, onClose }) {
   return (
@@ -237,7 +246,7 @@ function MobileMenu({ currentPageName, onClose }) {
     >
       <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: 'rgba(234,0,234,0.2)' }}>
         <span className="text-xl font-bold" style={{ color: '#ea00ea', fontFamily: 'Poppins, sans-serif' }}>Menu</span>
-        <button onClick={onClose} className="h-9 w-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(234,0,234,0.12)', color: '#ea00ea' }}>
+        <button onClick={onClose} className="touch-target h-9 w-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(234,0,234,0.12)', color: '#ea00ea' }}>
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -300,6 +309,7 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
   const scrollPositions = useRef({});
+  const tabLastUrl = useRef({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Optimistic active tab — updates instantly on tap before route change completes
   const [optimisticTab, setOptimisticTab] = useState(null);
@@ -325,7 +335,10 @@ export default function Layout({ children, currentPageName }) {
     setMobileMenuOpen(false);
     // Clear optimistic tab once real route matches
     setOptimisticTab(null);
-  }, [currentPageName]);
+    // Cache current URL under the bottom tab that owns this page
+    const owningTab = TAB_OWNERSHIP[currentPageName];
+    if (owningTab) tabLastUrl.current[owningTab] = location.pathname + (location.search || '');
+  }, [currentPageName, location.pathname, location.search]);
 
   return (
     <div className="min-h-screen" style={{ background: '#0a1929', color: '#fff' }}>
@@ -366,7 +379,7 @@ export default function Layout({ children, currentPageName }) {
               {isChildPage && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="md:hidden flex items-center justify-center h-8 w-8 rounded-xl transition-all"
+                  className="touch-target md:hidden flex items-center justify-center h-8 w-8 rounded-xl transition-all"
                   style={{ background: 'rgba(234,0,234,0.12)', color: '#ea00ea' }}
                 >
                   <ArrowLeft className="h-5 w-5" />
@@ -402,7 +415,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Mobile burger */}
             <button
-              className="md:hidden h-9 w-9 rounded-xl flex items-center justify-center transition-all"
+              className="touch-target md:hidden h-9 w-9 rounded-xl flex items-center justify-center transition-all"
               style={{ background: mobileMenuOpen ? 'rgba(234,0,234,0.2)' : 'rgba(255,255,255,0.06)', color: mobileMenuOpen ? '#ea00ea' : '#c3c3c3' }}
               onClick={() => setMobileMenuOpen(o => !o)}
             >
@@ -445,16 +458,23 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center justify-around px-2 pt-2 pb-1">
           {MOBILE_NAV.map(item => {
             const Icon = item.icon;
-            // Optimistic: show active immediately on tap, before route resolves
-            const active = optimisticTab ? optimisticTab === item.path : currentPageName === item.path;
+            // Active = owning bottom tab matches current page (or optimistic tap)
+            const active = optimisticTab ? optimisticTab === item.path : TAB_OWNERSHIP[currentPageName] === item.path;
+            const handleTap = () => {
+              setOptimisticTab(item.path);
+              const stored = tabLastUrl.current[item.path];
+              if (TAB_OWNERSHIP[currentPageName] !== item.path) {
+                // Restore the last URL visited under this tab (cached history),
+                // otherwise fall back to the tab's default page.
+                navigate(stored || createPageUrl(item.path));
+              }
+            };
             return (
-              <Link
+              <button
                 key={item.path}
-                to={createPageUrl(item.path)}
-                replace={currentPageName === item.path} // don't push duplicate stack entry
-                onClick={() => setOptimisticTab(item.path)}
-                className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-colors"
-                style={{ color: active ? '#ea00ea' : '#5e6a78', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
+                onClick={handleTap}
+                className="touch-target flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-colors"
+                style={{ color: active ? '#ea00ea' : '#5e6a78', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent', minHeight: '44px' }}
               >
                 <motion.div
                   className="h-7 w-7 rounded-lg flex items-center justify-center"
@@ -465,14 +485,14 @@ export default function Layout({ children, currentPageName }) {
                   <Icon className="h-4 w-4" />
                 </motion.div>
                 <span className="text-[9px] font-semibold">{item.name}</span>
-              </Link>
+              </button>
             );
           })}
           {/* More → opens mobile menu */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl"
-            style={{ color: '#5e6a78', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}>
+            className="touch-target flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl"
+            style={{ color: '#5e6a78', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent', minHeight: '44px' }}>
             <div className="h-7 w-7 rounded-lg flex items-center justify-center">
               <Menu className="h-4 w-4" />
             </div>

@@ -253,7 +253,9 @@ export default function Analytics() {
               ) : logs.length === 0 ? (
                 <p className="text-sm text-center py-8" style={{ color: '#5e6a78' }}>No activity logs yet</p>
               ) : (
-                <div className="overflow-x-auto">
+                <>
+                {/* Desktop table */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
                       <tr style={{ borderBottom: '1px solid rgba(84,176,231,0.15)' }}>
@@ -287,6 +289,27 @@ export default function Analytics() {
                   </table>
                   {logs.length > 20 && <p className="text-xs mt-2 text-center" style={{ color: '#5e6a78' }}>Showing 20 of {logs.length} — export CSV for full data</p>}
                 </div>
+                {/* Mobile stacked cards */}
+                <div className="md:hidden space-y-2">
+                  {logs.slice(0, 20).map((log, i) => (
+                    <div key={i} className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(84,176,231,0.15)' }}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold" style={{ color: '#d7dde5' }}>{log.lead_username || '—'}</span>
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold"
+                          style={{ background: log.channel === 'email' ? 'rgba(84,176,231,0.15)' : 'rgba(74,203,191,0.15)', color: log.channel === 'email' ? '#54b0e7' : '#4acbbf' }}>
+                          {log.channel?.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span style={{ color: '#9ea7b5' }}>{log.sequence_name || '—'}</span>
+                        <span style={{ color: log.status === 'sent' ? '#2ecc71' : log.status === 'failed' ? '#f66c25' : '#9ea7b5' }}>{log.status}</span>
+                      </div>
+                      <p className="text-[10px] mt-1" style={{ color: '#5e6a78' }}>{log.created_date ? new Date(log.created_date).toLocaleDateString() : '—'}</p>
+                    </div>
+                  ))}
+                  {logs.length > 20 && <p className="text-xs mt-2 text-center" style={{ color: '#5e6a78' }}>Showing 20 of {logs.length} — export CSV for full data</p>}
+                </div>
+                </>
               )}
             </div>
           </div>
@@ -385,7 +408,8 @@ export default function Analytics() {
                       Breakdown by {DIMENSIONS.find(d => d.value === dimension)?.label}
                     </h2>
                   </div>
-                  <div className="overflow-x-auto">
+                  {/* Desktop table */}
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr style={{ borderBottom: '1px solid rgba(234,0,234,0.1)' }}>
@@ -411,6 +435,26 @@ export default function Analytics() {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                  {/* Mobile stacked cards */}
+                  <div className="md:hidden divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                    {chartData.slice(0, 20).map((row, i) => (
+                      <div key={i} className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-sm font-semibold mb-2" style={{ color: '#fff' }}>{row.dim}</p>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                          {metricDefs.map(m => (
+                            <div key={m.key} className="flex items-center justify-between">
+                              <span className="text-[11px]" style={{ color: '#9ea7b5' }}>{m.label}</span>
+                              <span className="text-[11px] font-semibold" style={{ color: '#d7dde5' }}>
+                                {m.key === 'bounceRate' ? (row.bounceRate != null ? `${(row.bounceRate * 100).toFixed(1)}%` : '—')
+                                  : m.key === 'averageSessionDuration' ? fmtDuration(row.averageSessionDuration)
+                                  : fmt(row[m.key])}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </>

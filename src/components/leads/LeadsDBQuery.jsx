@@ -149,13 +149,16 @@ export default function LeadsDBQuery() {
           {/* Row 2: Follower Slider */}
           <div className="rounded-lg px-4 py-3" style={{ background: 'rgba(84,176,231,0.06)', border: '1px solid rgba(84,176,231,0.2)' }}>
             <div className="flex items-center gap-3 mb-2">
-              <input
-                type="checkbox"
-                id="follower-toggle"
-                checked={useFollowerFilter}
-                onChange={e => setUseFollowerFilter(e.target.checked)}
-                className="accent-[#54b0e7]"
-              />
+              <label htmlFor="follower-toggle" className="touch-target inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  id="follower-toggle"
+                  checked={useFollowerFilter}
+                  onChange={e => setUseFollowerFilter(e.target.checked)}
+                  className="accent-[#54b0e7]"
+                  style={{ width: 20, height: 20 }}
+                />
+              </label>
               <label htmlFor="follower-toggle" className="text-xs font-semibold cursor-pointer" style={{ color: '#54b0e7' }}>
                 Follower Count Filter
               </label>
@@ -211,8 +214,9 @@ export default function LeadsDBQuery() {
                   </Button>
                 </div>
 
-                <div className="rounded-lg overflow-x-auto" style={{ border: '1px solid rgba(84,176,231,0.25)', maxHeight: '400px', overflowY: 'auto' }}>
-                  <table className="w-full text-xs">
+                <div className="rounded-lg" style={{ border: '1px solid rgba(84,176,231,0.25)', maxHeight: '400px', overflowY: 'auto' }}>
+                  {/* Desktop table */}
+                  <table className="hidden md:table w-full text-xs">
                     <thead className="sticky top-0">
                       <tr style={{ background: 'rgba(10,25,41,0.98)', borderBottom: '1px solid rgba(84,176,231,0.25)' }}>
                         {['ID', 'Industry', 'City', 'State', 'Followers', 'Contact', 'Score'].map(h => (
@@ -256,6 +260,33 @@ export default function LeadsDBQuery() {
                       })}
                     </tbody>
                   </table>
+                  {/* Mobile stacked cards */}
+                  <div className="md:hidden divide-y" style={{ borderColor: 'rgba(94,106,120,0.15)' }}>
+                    {results.map((row, i) => {
+                      const sc = scoreColor(row.verification_score);
+                      return (
+                        <div key={i} className="p-3" style={{ background: rowBg(row.verification_score), borderBottom: '1px solid rgba(94,106,120,0.15)' }}>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="font-mono text-[11px]" style={{ color: '#9ea7b5' }}>{row.id}</span>
+                            <span className="px-2 py-0.5 rounded-full font-bold text-[11px]" style={{ background: sc.bg, color: sc.color }}>
+                              {row.verification_score ?? '—'}
+                            </span>
+                          </div>
+                          <p className="text-xs font-semibold" style={{ color: '#d7dde5' }}>{row.industry || '—'}</p>
+                          <div className="flex items-center gap-2 mt-1 text-[11px]">
+                            <span style={{ color: '#d7dde5' }}>{row.city || '—'}</span>
+                            <span className="px-2 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(84,176,231,0.15)', color: '#54b0e7' }}>{row.state}</span>
+                            <span style={{ color: '#4acbbf' }}>{formatFollowers(row.follower_count) || '—'}</span>
+                          </div>
+                          <div className="flex gap-1 mt-1.5">
+                            {row.email && <span title={row.email} className="px-1.5 py-0.5 rounded text-[10px] font-semibold" style={{ background: 'rgba(74,203,191,0.15)', color: '#4acbbf' }}>✉ Email</span>}
+                            {row.phone && <span title={row.phone} className="px-1.5 py-0.5 rounded text-[10px] font-semibold" style={{ background: 'rgba(84,176,231,0.15)', color: '#54b0e7' }}>☎ Phone</span>}
+                            {!row.email && !row.phone && <span style={{ color: '#5e6a78' }}>No contact</span>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )

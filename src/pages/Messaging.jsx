@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Send, Plus, Search, Circle, ArrowLeft, Loader2, MessageSquare, User } from 'lucide-react';
 
 const OMEGA = {
@@ -234,7 +235,7 @@ export default function Messaging() {
             {composing ? (
               <div className="flex flex-col h-full">
                 <div className="p-4 border-b flex items-center gap-3" style={{ borderColor: OMEGA.border }}>
-                  <button onClick={() => setComposing(false)} style={{ color: OMEGA.muted }}>
+                  <button onClick={() => setComposing(false)} className="touch-target" style={{ color: OMEGA.muted }}>
                     <ArrowLeft className="h-4 w-4" />
                   </button>
                   <h2 className="font-bold text-sm" style={{ color: OMEGA.magenta }}>New Message</h2>
@@ -242,16 +243,17 @@ export default function Messaging() {
                 <div className="p-4 space-y-3">
                   <div>
                     <label className="text-xs font-semibold mb-1 block" style={{ color: OMEGA.muted }}>To</label>
-                    <select
-                      value={composeTo}
-                      onChange={e => setComposeTo(e.target.value)}
-                      className="w-full rounded-lg px-3 py-2 text-sm outline-none"
-                      style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: `1px solid ${OMEGA.border}` }}>
-                      <option value="">Select a team member…</option>
-                      {filteredUsers.map(u => (
-                        <option key={u.email} value={u.email}>{u.full_name} ({u.email})</option>
-                      ))}
-                    </select>
+                    <Select value={composeTo || 'none'} onValueChange={(v) => setComposeTo(v === 'none' ? '' : v)}>
+                      <SelectTrigger className="w-full text-sm" style={{ background: 'rgba(255,255,255,0.05)', borderColor: OMEGA.border, color: '#fff' }}>
+                        <SelectValue placeholder="Select a team member…" />
+                      </SelectTrigger>
+                      <SelectContent style={{ background: '#1a2332', border: `1px solid ${OMEGA.border}` }}>
+                        <SelectItem value="none" style={{ color: '#9ea7b5' }}>Select a team member…</SelectItem>
+                        {filteredUsers.map(u => (
+                          <SelectItem key={u.email} value={u.email} style={{ color: '#fff' }}>{u.full_name} ({u.email})</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <label className="text-xs font-semibold mb-1 block" style={{ color: OMEGA.muted }}>Subject</label>
@@ -337,6 +339,7 @@ export default function Messaging() {
                     onClick={sendMessage}
                     disabled={!newMsg.trim() || sending}
                     size="icon"
+                    className="touch-target"
                     style={{ background: 'linear-gradient(135deg, #ea00ea, #00c2e0)' }}
                   >
                     {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

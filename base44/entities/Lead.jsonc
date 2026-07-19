@@ -137,14 +137,10 @@
   },
   "required": [],
   "rls": {
-    "create": {},
     "read": {
       "$or": [
         {
           "created_by": "{{user.email}}"
-        },
-        {
-          "data.assigned_to": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -159,7 +155,16 @@
           "created_by": "{{user.email}}"
         },
         {
-          "data.assigned_to": "{{user.email}}"
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -168,7 +173,7 @@
         }
       ]
     },
-    "delete": {
+    "write": {
       "$or": [
         {
           "created_by": "{{user.email}}"
