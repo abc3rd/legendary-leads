@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileDrawerSelect from '@/components/ui/MobileDrawerSelect';
 import {
   Mic, Play, Loader2, CheckCircle2, ChevronDown, ChevronUp,
   Sparkles, Phone, MessageSquare, User, BarChart2, List
@@ -195,28 +195,30 @@ Rewrite this as a natural, highly personalized, conversational version matching 
               {/* Lead Selection */}
               <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #0a1929 0%, #1a2332 100%)', border: '1.5px solid rgba(84,176,231,0.3)' }}>
                 <h2 className="text-sm font-bold mb-3" style={{ color: '#54b0e7' }}>Select Lead</h2>
-                <Select value={statusFilter || 'all'} onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v); setSelectedLeadId(''); }}>
-                  <SelectTrigger className="w-full mb-2 text-xs" style={{ background: '#071a2c', color: '#d7dde5', borderColor: '#2a3a4a' }}>
-                    <SelectValue placeholder="All Statuses" />
-                  </SelectTrigger>
-                  <SelectContent style={{ background: '#1a2332', border: '1px solid #2a3a4a' }}>
-                    <SelectItem value="all" style={{ color: '#9ea7b5' }}>All Statuses</SelectItem>
-                    {['new','cold_outreach','contacted','qualified','in_negotiation','unresponsive'].map(s => (
-                      <SelectItem key={s} value={s} style={{ color: '#fff' }}>{s.replace(/_/g,' ')}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={selectedLeadId || 'none'} onValueChange={(v) => setSelectedLeadId(v === 'none' ? '' : v)}>
-                  <SelectTrigger className="w-full text-xs" style={{ background: '#071a2c', color: '#d7dde5', borderColor: '#2a3a4a' }}>
-                    <SelectValue placeholder="Choose a lead…" />
-                  </SelectTrigger>
-                  <SelectContent style={{ background: '#1a2332', border: '1px solid #2a3a4a' }}>
-                    <SelectItem value="none" style={{ color: '#9ea7b5' }}>Choose a lead…</SelectItem>
-                    {filteredLeads.map(l => (
-                      <SelectItem key={l.id} value={l.id} style={{ color: '#fff' }}>{l.name || l.username}{l.category ? ` · ${l.category}` : ''}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <MobileDrawerSelect
+                  value={statusFilter || 'all'}
+                  onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v); setSelectedLeadId(''); }}
+                  placeholder="All Statuses"
+                  title="Filter by Status"
+                  className="w-full mb-2 text-xs"
+                  triggerStyle={{ background: '#071a2c', color: '#d7dde5', borderColor: '#2a3a4a' }}
+                  options={[
+                    { value: 'all', label: 'All Statuses' },
+                    ...['new','cold_outreach','contacted','qualified','in_negotiation','unresponsive'].map(s => ({ value: s, label: s.replace(/_/g,' ') })),
+                  ]}
+                />
+                <MobileDrawerSelect
+                  value={selectedLeadId || 'none'}
+                  onValueChange={(v) => setSelectedLeadId(v === 'none' ? '' : v)}
+                  placeholder="Choose a lead…"
+                  title="Select a Lead"
+                  className="w-full text-xs"
+                  triggerStyle={{ background: '#071a2c', color: '#d7dde5', borderColor: '#2a3a4a' }}
+                  options={[
+                    { value: 'none', label: 'Choose a lead…' },
+                    ...filteredLeads.map(l => ({ value: l.id, label: `${l.name || l.username}${l.category ? ` · ${l.category}` : ''}` })),
+                  ]}
+                />
                 {selectedLead && (
                   <div className="mt-3 rounded-lg p-2.5" style={{ background: 'rgba(84,176,231,0.08)', border: '1px solid rgba(84,176,231,0.2)' }}>
                     <div className="flex items-center gap-2 mb-1">

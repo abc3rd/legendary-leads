@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileDrawerSelect from '@/components/ui/MobileDrawerSelect';
 import { X, Mail, Clock, Users, ChevronRight, Info } from 'lucide-react';
 import { toast } from 'sonner';
+import { useModalBackStack } from '@/hooks/useModalBackStack';
 
 const VARS = ['{{name}}', '{{username}}', '{{email}}', '{{category}}', '{{status}}'];
 
@@ -29,6 +30,8 @@ export default function CampaignEditor({ campaign, leads = [], onClose, onSaved 
   const [filterCategory, setFilterCategory] = useState(() => {
     try { return JSON.parse(campaign?.target_filter || '{}').category || ''; } catch { return ''; }
   });
+
+  useModalBackStack(true, onClose);
 
   const categories = [...new Set(leads.map(l => l.category).filter(Boolean))];
 
@@ -159,27 +162,25 @@ export default function CampaignEditor({ campaign, leads = [], onClose, onSaved 
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs block mb-1" style={{ color: '#9ea7b5' }}>Filter by Status</label>
-                <Select value={filterStatus || 'all'} onValueChange={v => setFilterStatus(v === 'all' ? '' : v)}>
-                  <SelectTrigger style={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }}>
-                    <SelectValue placeholder="All statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    {STATUS_OPTIONS.map(s => <SelectItem key={s} value={s}>{s.replace(/_/g, ' ')}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <MobileDrawerSelect
+                  value={filterStatus || 'all'}
+                  onValueChange={v => setFilterStatus(v === 'all' ? '' : v)}
+                  placeholder="All statuses"
+                  title="Filter by Status"
+                  triggerStyle={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }}
+                  options={[{ value: 'all', label: 'All Statuses' }, ...STATUS_OPTIONS.map(s => ({ value: s, label: s.replace(/_/g, ' ') }))]}
+                />
               </div>
               <div>
                 <label className="text-xs block mb-1" style={{ color: '#9ea7b5' }}>Filter by Category</label>
-                <Select value={filterCategory || 'all'} onValueChange={v => setFilterCategory(v === 'all' ? '' : v)}>
-                  <SelectTrigger style={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }}>
-                    <SelectValue placeholder="All categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <MobileDrawerSelect
+                  value={filterCategory || 'all'}
+                  onValueChange={v => setFilterCategory(v === 'all' ? '' : v)}
+                  placeholder="All categories"
+                  title="Filter by Category"
+                  triggerStyle={{ background: '#071a2c', borderColor: '#2a3a4a', color: '#fff' }}
+                  options={[{ value: 'all', label: 'All Categories' }, ...categories.map(c => ({ value: c, label: c }))]}
+                />
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ import {
   Layers, Shuffle, Star, MessageSquare
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useModalBackStack } from '@/hooks/useModalBackStack';
 
 const TRIGGER_TYPES = [
   { value: 'status_change',    label: 'Status Changes',       color: '#f8d417' },
@@ -88,6 +89,8 @@ function RuleModal({ rule, sequences, onClose, onSaved }) {
   };
   const [form, setForm] = useState(rule ? { ...defaultForm, ...rule, conditions: rule.conditions ? (typeof rule.conditions === 'string' ? JSON.parse(rule.conditions) : rule.conditions) : [] } : defaultForm);
   const [saving, setSaving] = useState(false);
+
+  useModalBackStack(true, onClose);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 

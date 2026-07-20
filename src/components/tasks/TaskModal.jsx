@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X } from 'lucide-react';
+import { useModalBackStack } from '@/hooks/useModalBackStack';
 
 const TASK_TYPES = ['Make Phone Call', 'Send Direct Message', 'Send Email', 'Schedule Meeting', 'Follow Up', 'Other'];
 const STATUSES = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
@@ -24,6 +25,8 @@ export default function TaskModal({ task, leads, onSave, onClose }) {
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  useModalBackStack(true, onClose);
 
   const handleLeadChange = (leadId) => {
     const lead = leads.find(l => l.id === leadId);

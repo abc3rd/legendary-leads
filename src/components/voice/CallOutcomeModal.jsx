@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle2, Phone } from 'lucide-react';
 import { toast } from 'sonner';
+import { useModalBackStack } from '@/hooks/useModalBackStack';
 
 const OUTCOMES = [
   { id: 'interested',      label: '🔥 Interested',       color: '#2ecc71' },
@@ -18,6 +19,8 @@ export default function CallOutcomeModal({ callLog, onClose, onSubmit }) {
   const [notes, setNotes] = useState('');
   const [duration, setDuration] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useModalBackStack(true, onClose);
 
   const handleSubmit = async () => {
     if (!outcome) { toast.error('Please select an outcome'); return; }

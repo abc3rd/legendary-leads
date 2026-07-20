@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileDrawerSelect from '@/components/ui/MobileDrawerSelect';
 import { Send, Plus, Search, Circle, ArrowLeft, Loader2, MessageSquare, User } from 'lucide-react';
 
 const OMEGA = {
@@ -243,17 +243,18 @@ export default function Messaging() {
                 <div className="p-4 space-y-3">
                   <div>
                     <label className="text-xs font-semibold mb-1 block" style={{ color: OMEGA.muted }}>To</label>
-                    <Select value={composeTo || 'none'} onValueChange={(v) => setComposeTo(v === 'none' ? '' : v)}>
-                      <SelectTrigger className="w-full text-sm" style={{ background: 'rgba(255,255,255,0.05)', borderColor: OMEGA.border, color: '#fff' }}>
-                        <SelectValue placeholder="Select a team member…" />
-                      </SelectTrigger>
-                      <SelectContent style={{ background: '#1a2332', border: `1px solid ${OMEGA.border}` }}>
-                        <SelectItem value="none" style={{ color: '#9ea7b5' }}>Select a team member…</SelectItem>
-                        {filteredUsers.map(u => (
-                          <SelectItem key={u.email} value={u.email} style={{ color: '#fff' }}>{u.full_name} ({u.email})</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <MobileDrawerSelect
+                      value={composeTo || 'none'}
+                      onValueChange={(v) => setComposeTo(v === 'none' ? '' : v)}
+                      placeholder="Select a team member…"
+                      title="Select a team member"
+                      className="w-full text-sm"
+                      triggerStyle={{ background: 'rgba(255,255,255,0.05)', borderColor: OMEGA.border, color: '#fff' }}
+                      options={[
+                        { value: 'none', label: 'Select a team member…' },
+                        ...filteredUsers.map(u => ({ value: u.email, label: `${u.full_name} (${u.email})` })),
+                      ]}
+                    />
                   </div>
                   <div>
                     <label className="text-xs font-semibold mb-1 block" style={{ color: OMEGA.muted }}>Subject</label>

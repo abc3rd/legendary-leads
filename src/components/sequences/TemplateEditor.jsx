@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X, Mail, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { useModalBackStack } from '@/hooks/useModalBackStack';
 
 const VARIABLES = ['{{name}}', '{{username}}', '{{email}}', '{{phone}}', '{{category}}', '{{status}}'];
 
@@ -15,6 +16,8 @@ export default function TemplateEditor({ template, onClose, onSaved }) {
     body: template?.body || '',
   });
   const [saving, setSaving] = useState(false);
+
+  useModalBackStack(true, onClose);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   const insertVar = (v) => set('body', form.body + v);

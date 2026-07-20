@@ -462,11 +462,14 @@ export default function Layout({ children, currentPageName }) {
             const active = optimisticTab ? optimisticTab === item.path : TAB_OWNERSHIP[currentPageName] === item.path;
             const handleTap = () => {
               setOptimisticTab(item.path);
-              const stored = tabLastUrl.current[item.path];
               if (TAB_OWNERSHIP[currentPageName] !== item.path) {
                 // Restore the last URL visited under this tab (cached history),
                 // otherwise fall back to the tab's default page.
+                const stored = tabLastUrl.current[item.path];
                 navigate(stored || createPageUrl(item.path));
+              } else {
+                // Already on this tab — reset it back to its root page.
+                navigate(createPageUrl(item.path));
               }
             };
             return (
